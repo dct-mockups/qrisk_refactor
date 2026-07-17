@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- skill:chrome -->
+<style>
+/* Credit line — bottom-right */
+.design-ui-credit {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  font: 11px/1 system-ui, sans-serif;
+  color: rgba(128,128,128,0.5);
+  pointer-events: none;
+  z-index: 2147483647;
+  transition: opacity 0.4s ease;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+/* Hide chrome on touch devices */
+@media (hover: none) {
+  .design-ui-credit { display: none; }
+}
+
+/* Print fixes */
+@media print {
+  * {
+    transition: none !important;
+    animation: none !important;
+    box-shadow: none !important;
+  }
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .design-ui-credit { display: none !important; }
+}
+
+</style>
+<script>
+(function () {
+    // Design-ui pages are single compositions, so the whole body is editable.
+    function markEditable() {
+        document.body.classList.add('artifact-editable');
+    }
+
+    // Credit badge with idle-fade. Hover devices only.
+    function initChromeUI() {
+        if (!matchMedia('(hover: hover)').matches) return;
+
+        var credit = document.createElement('div');
+        credit.className = 'design-ui-credit';
+        credit.setAttribute('aria-hidden', 'true');
+        credit.innerHTML = '\u{1F49C} by ClickUp Brain';
+        document.body.appendChild(credit);
+
+        var timer = null;
+        var fade = function (out) { credit.style.opacity = out ? '0' : ''; };
+        fade(true);
+        var show = function () {
+            fade(false);
+            clearTimeout(timer);
+            timer = setTimeout(function () { fade(true); }, 3000);
+        };
+        document.addEventListener('mousemove', show);
+        show();
+    }
+
+    function init() {
+        markEditable();
+        initChromeUI();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+<!-- /skill:chrome -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QRisk — Refactorización Fase 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* Topbar identity preserved */
+      --primary:#8a3db0; --primary-dark:#6e2992;
+
+      /* Neutrals, tinted toward the purple hue for cohesion */
+      --bg:oklch(0.98 0.006 320);
+      --surface:oklch(0.995 0.002 320);
+      --surface-2:oklch(0.975 0.006 320);
+      --line:oklch(0.912 0.008 320);
+      --line-soft:oklch(0.95 0.006 320);
+      --text:oklch(0.30 0.022 320);
+      --text-2:oklch(0.44 0.02 320);
+      --muted:oklch(0.56 0.016 320);
+
+      --primary-050:oklch(0.97 0.018 320);
+      --primary-100:oklch(0.93 0.05 320);
+      --primary-line:oklch(0.82 0.08 320);
+
+      /* Semantic severity scale */
+      --crit:oklch(0.56 0.20 27);   --crit-dark:oklch(0.45 0.16 27);  --crit-soft:oklch(0.965 0.028 27);  --crit-line:oklch(0.88 0.06 27);
+      --high:oklch(0.68 0.16 52);   --high-dark:oklch(0.52 0.14 48);  --high-soft:oklch(0.965 0.035 60);  --high-line:oklch(0.88 0.07 55);
+      --med:oklch(0.79 0.13 88);    --med-dark:oklch(0.52 0.10 85);   --med-soft:oklch(0.97 0.045 92);    --med-line:oklch(0.89 0.08 90);
+      --low:oklch(0.64 0.14 150);   --low-dark:oklch(0.46 0.10 150);  --low-soft:oklch(0.965 0.038 152);  --low-line:oklch(0.87 0.07 150);
+      --info:oklch(0.60 0.13 250);  --info-dark:oklch(0.45 0.12 255); --info-soft:oklch(0.965 0.028 255); --info-line:oklch(0.87 0.06 255);
+
+      --shadow-sm:0 1px 2px oklch(0.4 0.03 320 / .06), 0 1px 3px oklch(0.4 0.03 320 / .05);
+      --shadow-md:0 4px 14px oklch(0.4 0.04 320 / .09), 0 2px 5px oklch(0.4 0.04 320 / .05);
+      --shadow-lg:0 16px 40px oklch(0.34 0.05 320 / .16);
+      --focus:0 0 0 3px oklch(0.55 0.19 320 / .20);
+
+      --r-sm:8px; --r:12px; --r-lg:16px;
+      --ease:cubic-bezier(0.22,1,0.36,1);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    body{font-size:14px;line-height:1.5}
+    button,input,select{font:inherit}
+    h1,h2,h3{text-wrap:balance}
+    .material-symbols-outlined{font-size:20px;line-height:1;vertical-align:middle}
+
+    /* ── TOPBAR (kept as original per request) ── */
+    .topbar{position:sticky;top:0;z-index:30;height:58px;background:var(--primary);color:#fff;display:flex;align-items:center;padding:0 18px;box-shadow:0 2px 12px rgba(0,0,0,.14)}
+    .brand{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px}
+    .top-actions{margin-left:auto;display:flex;gap:10px}
+
+    /* ── Buttons ── */
+    .btn{border:0;border-radius:var(--r-sm);padding:10px 16px;font-weight:600;font-size:.875rem;cursor:pointer;transition:background .18s var(--ease),box-shadow .18s,transform .1s;display:inline-flex;align-items:center;justify-content:center}
+    .btn:active{transform:translateY(1px)}
+    .btn-light{background:#fff;color:var(--primary-dark)}
+    .btn-light:hover{background:oklch(0.96 0.02 320)}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+
+    /* ── Page ── */
+    .page{min-height:calc(100vh - 58px);padding:24px 26px 48px;transition:margin-right .25s var(--ease)}
+    .page.shifted{margin-right:360px}
+
+    /* ── Filters ── */
+    .filters{display:grid;grid-template-columns:1.3fr 1.3fr 1fr auto;gap:16px;align-items:end;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-sm);border-radius:var(--r-lg);padding:20px 22px}
+    .field label{display:block;font-size:.6875rem;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+    .field input,.field select{width:100%;height:44px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 13px;background:var(--surface);color:var(--text);font-size:.875rem;transition:border-color .18s,box-shadow .18s}
+    .field input:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:var(--focus)}
+    .btn.apply{height:44px;padding:0 22px;background:var(--primary);color:#fff;font-weight:700;letter-spacing:.04em;box-shadow:var(--shadow-sm)}
+    .btn.apply:hover{background:var(--primary-dark)}
+
+    /* ── Section tabs (top level) ── */
+    .section-tabs{display:flex;gap:30px;margin-top:26px;padding:0 4px;border-bottom:1px solid var(--line);position:relative}
+    .section-tab{border:0;background:none;color:var(--muted);padding:13px 2px;font-weight:600;font-size:1rem;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:color .18s,border-color .18s}
+    .section-tab:hover{color:var(--text)}
+    .section-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);font-weight:700}
+    .section-tab:focus-visible{outline:none;box-shadow:var(--focus);border-radius:6px}
+
+    .panel{margin-top:16px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);box-shadow:var(--shadow-sm);overflow:hidden}
+    .tabview{display:none}.tabview.active{display:block}
+
+    /* ── Unified stat cards — SAME component & grid across every tab ── */
+    .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:20px}
+    .card{--cd:var(--primary-dark);
+      background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+      padding:16px 18px;min-height:118px;display:flex;flex-direction:column;gap:7px;
+      box-shadow:var(--shadow-sm);position:relative;
+      transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+    .card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+    .card .smalltop{font-size:.6875rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--cd);line-height:1.3;min-height:1.9em}
+    .card .big{font-size:1.9rem;font-weight:700;line-height:1.05;color:var(--text);font-variant-numeric:tabular-nums;margin-top:auto}
+    .card .label{font-size:.8rem;color:var(--muted);line-height:1.4}
+    .card .label b{color:var(--text-2);font-weight:700}
+    /* neutral accents */
+    .card.lav{--cd:var(--primary-dark)}
+    .card.blue{--cd:var(--info-dark)}
+    /* severity / semantic fills (soft) */
+    .card.red,.card.crit{--cd:var(--crit-dark);background:var(--crit-soft);border-color:var(--crit-line)}
+    .card.green,.card.ok{--cd:var(--low-dark);background:var(--low-soft);border-color:var(--low-line)}
+    .card.high{--cd:var(--high-dark);background:var(--high-soft);border-color:var(--high-line)}
+    .card.med{--cd:var(--med-dark);background:var(--med-soft);border-color:var(--med-line)}
+    .card.blue2,.card.info{--cd:var(--info-dark);background:var(--info-soft);border-color:var(--info-line)}
+    .card.red .big,.card.crit .big,.card.green .big,.card.ok .big,
+    .card.high .big,.card.med .big,.card.blue2 .big,.card.info .big{color:var(--cd)}
+
+    /* ── Subtabs (second level) ── */
+    .subtabs{display:flex;gap:28px;padding:0 22px;border-bottom:1px solid var(--line)}
+    .subtab{padding:16px 2px;border:0;background:none;font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:color .18s,border-color .18s}
+    .subtab:hover{color:var(--text)}
+    .subtab.active{color:var(--primary-dark);border-bottom-color:var(--primary)}
+    .subtab:focus-visible{outline:none;box-shadow:var(--focus);border-radius:6px}
+    .subview{display:none}.subview.active{display:block}
+
+    /* ── Search toolbar (kept close to original) ── */
+    .toolbar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+    .toolbar .search{position:relative;flex:1;max-width:380px}
+    .toolbar .search input{width:100%;height:42px;padding:0 12px 0 38px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    .toolbar .search .material-symbols-outlined{position:absolute;left:11px;top:10px;color:#6b7280;font-size:20px}
+    .toolbar-right{margin-left:auto;display:flex;gap:8px}
+    .icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:#fff;color:#4b5563;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+
+    /* ── Tables — legible, faithful ── */
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:1080px;font-variant-numeric:tabular-nums}
+    thead th{background:var(--surface-2);color:var(--text);font-weight:700;font-size:13px;text-align:left;padding:14px 14px;white-space:nowrap;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:1}
+    thead th[title]{cursor:help}
+    td{border-top:1px solid var(--line-soft);padding:13px 14px;font-size:13px;color:var(--text-2);vertical-align:middle}
+    tbody tr.clickable{cursor:pointer;transition:background .15s}
+    tbody tr.clickable:hover{background:var(--primary-050)}
+
+    .sev-dot{display:inline-flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap;color:var(--text)}
+    .sev-dot::before{content:"";width:11px;height:11px;border-radius:50%;display:inline-block;background:var(--crit);flex:none}
+    .sev-dot.crit::before{background:var(--crit)}
+    .sev-dot.med::before{background:var(--med)}
+    .sev-dot.low::before{background:var(--low)}
+    .sev-dot.yellow::before{background:var(--med)}
+    .sev-dot.orange::before{background:var(--high)}
+    .sev-label{display:inline-flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap;color:var(--text)}
+    .sev-label .material-symbols-outlined{font-size:18px}
+    .danger-txt{color:var(--crit-dark);font-weight:700}
+
+    .pagination{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--line);color:var(--text-2);font-size:13px}
+    .pagination b{color:var(--text);font-weight:700}
+    .pagination .nav{width:34px;height:34px;border-radius:var(--r-sm);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:.18s}
+    .pagination .nav:hover{border-color:var(--primary-line);color:var(--primary);background:var(--primary-050)}
+
+    /* ── Map ── */
+    .mapbox{height:430px;position:relative;overflow:hidden;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 39px, oklch(0.5 0.03 250/.06) 39px 40px),
+        repeating-linear-gradient(90deg, transparent 0 39px, oklch(0.5 0.03 250/.06) 39px 40px),
+        linear-gradient(135deg, oklch(0.87 0.035 220), oklch(0.9 0.045 150) 55%, oklch(0.89 0.05 95))}
+    .mapbox::before{content:"";position:absolute;left:26%;top:-6%;width:14%;height:118%;background:oklch(0.98 0.01 240/.5);transform:rotate(12deg)}
+    .mapbox::after{content:"";position:absolute;left:60%;top:-6%;width:6%;height:118%;background:oklch(0.98 0.01 240/.42);transform:rotate(-8deg)}
+    .pin{position:absolute;width:15px;height:15px;border-radius:50%;background:var(--crit);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.34),0 0 0 6px oklch(0.56 0.2 27/.16);z-index:2}
+    .tooltip{position:absolute;right:16px;top:120px;background:oklch(0.28 0.02 320/.94);color:#fff;padding:13px 15px;border-radius:var(--r);max-width:270px;font-size:12px;line-height:1.55;box-shadow:var(--shadow-lg);z-index:3}
+    .tooltip b{font-weight:700}
+    .legend{position:absolute;left:16px;bottom:16px;background:var(--surface);padding:9px 12px;border-radius:var(--r-sm);box-shadow:var(--shadow-md);font-size:12px;color:var(--text-2);z-index:3}
+
+    /* ── Modals ── */
+    .modal-backdrop{position:fixed;inset:0;background:oklch(0.28 0.03 320/.44);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+    .modal-backdrop.open{display:flex;animation:fade .2s var(--ease)}
+    @keyframes fade{from{opacity:0}to{opacity:1}}
+    .modal{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);overflow:hidden;max-height:calc(100vh - 40px);display:flex;flex-direction:column;animation:rise .28s var(--ease)}
+    @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .modal.wide{width:min(1280px,96vw)}
+    .modal.large{width:min(1100px,96vw)}
+    .modal.medium{width:min(860px,96vw)}
+    .modal-head{background:var(--primary);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px}
+    .modal-title{font-size:1.05rem;font-weight:700;line-height:1.3}
+    .modal-head .spacer{margin-left:auto}
+    .modal-head .head-icon{background:oklch(1 0 0/.12);border:0;color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--r-sm);transition:.15s}
+    .modal-head .head-icon:hover{background:oklch(1 0 0/.22)}
+    .modal-body{padding:0;overflow:auto}
+    .modal-footer{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;align-items:center;background:var(--surface);color:var(--text-2);font-size:13px}
+
+    .summary-head{display:grid;grid-template-columns:1fr auto;gap:12px;padding:20px;border-bottom:1px solid var(--line)}
+    .summary-lines{display:grid;gap:8px;font-size:.875rem}
+    .summary-line{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--text)}
+    .summary-line .material-symbols-outlined{color:var(--primary);font-size:19px}
+    .summary-line span{font-weight:500;color:var(--text-2)}
+    .summary-search{display:flex;align-items:center;gap:10px}
+    .summary-search input{height:44px;border:1px solid var(--line);border-radius:var(--r-sm);padding:0 13px;min-width:210px;background:var(--surface-2);font-size:.875rem;transition:.18s}
+    .summary-search input:focus{outline:none;background:var(--surface);border-color:var(--primary);box-shadow:var(--focus)}
+
+    .cycle-toggle{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--surface-2);cursor:pointer}
+    .cycle-toggle b{font-weight:600;color:var(--text)}
+    .cycle-toggle .icon-btn{background:var(--surface)}
+    .cycle-graphic{display:none;padding:0 20px 20px}
+    .cycle-graphic.open{display:block}
+    .timeline-wrap{background:var(--surface-2);border-radius:var(--r);overflow:hidden;border:1px solid var(--line);margin-top:16px}
+    .timebar{display:flex;height:66px;background:oklch(0.9 0.008 320);position:relative}
+    .timebar.top{background:oklch(0.82 0.012 320);color:var(--text)}
+    .chunk{position:relative;border-right:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--text);font-size:12px}
+    .work{background:var(--crit);color:#fff}
+    .pause{background:var(--info-soft)}
+    .rest{background:var(--surface-2)}
+    .split{position:absolute;top:0;bottom:0;width:0;border-right:2px dashed oklch(0.4 0.02 320/.6)}
+
+    .modal-table-wrap{overflow:auto}
+    .modal-table{width:100%;min-width:880px;border-collapse:collapse;font-variant-numeric:tabular-nums}
+    .modal-table th{position:sticky;top:0;z-index:1;background:var(--surface-2);color:var(--text);font-weight:700;font-size:13px;text-align:left;padding:14px 14px;border-bottom:1px solid var(--line)}
+    .modal-table td{border-top:1px solid var(--line-soft);padding:12px 14px;font-size:13px;color:var(--text-2)}
+
+    .details-layout{display:grid;grid-template-columns:1.05fr 1fr .9fr;min-height:500px;font-size:13px;line-height:1.45}
+    .details-col{padding:20px;border-right:1px solid var(--line)}
+    .details-col:last-child{border-right:0}
+    .details-col>div:not(.detail-label):not(.mini-map):not(.coord):not(.metric-block):not(.comment-box):not(.comment-input){color:var(--text)}
+    .detail-label{font-weight:700;margin:14px 0 4px;font-size:.6875rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+    .detail-label:first-child{margin-top:0}
+    .detail-mono{white-space:pre-line;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;line-height:1.45;color:var(--text-2);font-size:12px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:10px 12px}
+    .mini-map{height:250px;border-radius:var(--r-sm);position:relative;overflow:hidden;border:1px solid var(--line);
+      background:repeating-linear-gradient(0deg,transparent 0 29px,oklch(0.5 0.03 250/.07) 29px 30px),
+        repeating-linear-gradient(90deg,transparent 0 29px,oklch(0.5 0.03 250/.07) 29px 30px),
+        linear-gradient(135deg,oklch(0.86 0.04 150),oklch(0.89 0.05 100) 55%,oklch(0.87 0.045 220))}
+    .mini-map .pin{left:44%;top:38%;transform:scale(1.35)}
+    .coord{display:flex;align-items:center;gap:8px;margin:12px 0 20px;font-weight:600;color:var(--text-2)}
+    .coord .material-symbols-outlined{color:var(--primary);font-size:18px}
+    .metric-block{margin:16px 0 12px;padding-left:12px;border-left:2px solid var(--line)}
+    .metric-block b{display:block;font-size:.9375rem;line-height:1.3;color:var(--text)}
+    .metric-block small{display:block;color:var(--muted);margin-top:4px;font-size:12px}
+    .right-muted{color:var(--muted);font-weight:600;margin-bottom:12px;font-size:13px}
+    .comment-box{margin-top:auto;border-top:1px solid var(--line);padding-top:12px}
+    .comment-input{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:var(--r-sm);padding:4px 12px;background:var(--surface-2)}
+    .comment-input input{flex:1;border:0;outline:none;font-size:.875rem;background:transparent;color:var(--text);height:40px}
+    .comment-input .material-symbols-outlined{cursor:pointer}
+    .resolve{width:100%;background:var(--primary);color:#fff;height:46px;border:0;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:background .18s}
+    .resolve:hover{background:var(--primary-dark)}
+
+    /* ── CA review chips + sidebar ── */
+    .chip{display:none;position:absolute;top:10px;right:12px;background:var(--primary-050);border:1px solid var(--primary-line);color:var(--primary-dark);font-size:.625rem;font-weight:800;letter-spacing:.02em;padding:4px 9px;border-radius:999px;z-index:4}
+    .annotated{position:relative}
+    body.show-cas .chip{display:inline-flex}
+    .sidebar{position:fixed;right:0;top:58px;width:360px;height:calc(100vh - 58px);background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--shadow-lg);transform:translateX(100%);transition:transform .25s var(--ease);z-index:50;overflow:auto}
+    .sidebar.open{transform:translateX(0)}
+    .sidebar-head{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line);padding:18px;display:flex;align-items:center;gap:10px;z-index:2}
+    .sidebar-head h2{margin:0;font-size:1.05rem;font-weight:700;color:var(--text)}
+    .sidebar-head button{margin-left:auto;border:0;background:var(--surface-2);border-radius:var(--r-sm);width:34px;height:34px;cursor:pointer;color:var(--text-2);transition:.15s}
+    .sidebar-head button:hover{background:var(--primary-050);color:var(--primary)}
+    .ca-list{padding:16px}
+    .ca-item{border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px;background:var(--surface);cursor:pointer;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s}
+    .ca-item b{color:var(--primary-dark);font-size:.875rem}
+    .ca-item p{margin:7px 0 0;font-size:.8125rem;color:var(--text-2);line-height:1.5}
+    .ca-item:hover{border-color:var(--primary-line);background:var(--primary-050)}
+    .ca-item.active-ca{border-color:var(--primary);background:var(--primary-050);box-shadow:0 0 0 3px oklch(0.55 0.19 320/.15);transform:translateX(-2px)}
+    .ca-ref{border:0;background:transparent;color:inherit;font:inherit;font-weight:800;padding:0;cursor:pointer}
+    .ca-ref:hover{text-decoration:underline}
+    .ca-ref.active-ca{background:var(--primary-dark);color:#fff;border-radius:999px;padding:2px 7px;text-decoration:none}
+    .ca-separator{opacity:.5;margin:0 3px}
+    .ca-target-active{outline:3px solid oklch(0.55 0.19 320/.7)!important;outline-offset:3px;box-shadow:0 0 0 7px oklch(0.55 0.19 320/.12)!important;animation:caPulse 1.2s ease-in-out 2}
+    @keyframes caPulse{0%,100%{outline-color:oklch(0.55 0.19 320/.7)}50%{outline-color:oklch(0.7 0.18 350/.9)}}
+
+    @media (max-width:1100px){
+      .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .filters{grid-template-columns:1fr 1fr}
+      .details-layout{grid-template-columns:1fr}
+      .details-col{border-right:0;border-bottom:1px solid var(--line)}
+      .page.shifted{margin-right:0}
+      .sidebar{width:min(92vw,380px)}
+    }
+    @media (max-width:720px){
+      .page{padding:18px 16px 40px}
+      .cards{grid-template-columns:1fr}
+      .filters{grid-template-columns:1fr}
+      .section-tabs{overflow-x:auto;gap:22px}
+      .section-tab{white-space:nowrap}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">☰&nbsp; Panel De Riesgo</div>
+    <div class="top-actions">
+      <button id="caToggle" class="btn btn-light">Criterios de aceptación</button>
+    </div>
+  </header>
+
+  <main id="page" class="page">
+    <section class="filters annotated">
+      <span class="chip">CA-01 · CA-02</span>
+      <div class="field"><label>Grupo</label><input value="tramo del centro"></div>
+      <div class="field"><label>Vehículos</label><input value="13993 vehículos seleccionados"></div>
+      <div class="field"><label>Periodo</label><select><option>Julio 16 - 17, 2026</option><option>Hoy</option><option>Ayer y hoy</option></select></div>
+      <button class="btn apply">APLICAR</button>
+    </section>
+
+    <div class="section-tabs annotated">
+      <span class="chip">CA-03 · CA-11</span>
+      <button class="section-tab active" data-tab="hos">Horas de servicio</button>
+      <button class="section-tab" data-tab="speed">Excesos de velocidad</button>
+      <button class="section-tab" data-tab="offline">Dispositivos offline</button>
+    </div>
+
+    <section class="panel">
+      <!-- HOS -->
+      <div id="hos" class="tabview active">
+        <div class="cards annotated">
+          <span class="chip">CA-04</span>
+          <article class="card red"><div class="smalltop">Incumplimiento</div><div class="big">18 / 112</div><div class="label">16% Vehículos en Incumplimiento</div></article>
+          <article class="card green"><div class="smalltop">Cumplimiento</div><div class="big">94 / 112</div><div class="label">84% Vehículos en Cumplimiento</div></article>
+          <article class="card lav"><div class="smalltop">Promedio</div><div class="big">27 hrs</div><div class="label">Promedio horas de conducción</div></article>
+          <article class="card blue"><div class="smalltop">Total</div><div class="big">481 hrs</div><div class="label">Total horas de conducción</div></article>
+        </div>
+
+        <div class="subtabs">
+          <button class="subtab active" data-parent="hos" data-sub="hos-list">ALERTAS DE CONDUCCIÓN</button>
+          <button class="subtab" data-parent="hos" data-sub="hos-map">MAPA DE RIESGO</button>
+        </div>
+
+        <div id="hos-list" class="subview active">
+          <div class="toolbar annotated">
+            <span class="chip">CA-05 · CA-06 · CA-07</span>
+            <div class="search"><span class="material-symbols-outlined">search</span><input placeholder="Buscar en 36 registros..." /></div>
+            <div class="toolbar-right">
+              <button class="icon-btn" title="Exportar resultados"><span class="material-symbols-outlined">download</span></button>
+              <button class="icon-btn" title="Actualizar datos"><span class="material-symbols-outlined">refresh</span></button>
+            </div>
+          </div>
+          <div class="table-wrap annotated">
+            <span class="chip">CA-15</span>
+            <table>
+              <thead>
+                <tr>
+                  <th>Grupo Primario</th>
+                  <th>Vehículo</th>
+                  <th>Alerta</th>
+                  <th title="Nivel calculado por cantidad de alertas: 1–5 amarillo oscuro, 6–9 naranja y 10 o más rojo.">Nivel ⓘ</th>
+                  <th>Rango de Fechas</th>
+                  <th>Dist. Acumulada</th>
+                  <th>Horas de conducción</th>
+                  <th>Descanso Acumulado</th>
+                  <th># Alertas</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="clickable hos-row" data-modal="vehicleDetail">
+                  <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
+                  <td>TMO-371 - 3HSDZAPT9RN717571</td>
+                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
+                  <td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td>
+                  <td>15 Jul 03:22 – 17 Jul 12:00</td>
+                  <td>1707 km</td>
+                  <td class="danger-txt">31:40</td>
+                  <td>24:16</td>
+                  <td><b>10</b></td>
+                </tr>
+                <tr class="clickable hos-row" data-modal="vehicleDetail">
+                  <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
+                  <td>TMO-327 - 3HSDJAPT6EN018626</td>
+                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
+                  <td><span class="sev-label"><span class="sev-dot orange"></span>Alto</span></td>
+                  <td>14 Jul 22:10 – 17 Jul 11:18</td>
+                  <td>1718 km</td>
+                  <td class="danger-txt">66:02</td>
+                  <td>31:32</td>
+                  <td><b>8</b></td>
+                </tr>
+                <tr class="clickable hos-row" data-modal="vehicleDetail">
+                  <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
+                  <td>TMO-416 - 3HSDZAPT7SN768511</td>
+                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
+                  <td><span class="sev-label"><span class="sev-dot orange"></span>Alto</span></td>
+                  <td>16 Jul 01:05 – 17 Jul 08:00</td>
+                  <td>1095 km</td>
+                  <td class="danger-txt">18:44</td>
+                  <td>30:46</td>
+                  <td><b>7</b></td>
+                </tr>
+                <tr class="clickable hos-row" data-modal="vehicleDetail">
+                  <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
+                  <td>TMO-394 - 3HSDZAPT0SN678855</td>
+                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
+                  <td><span class="sev-label"><span class="sev-dot orange"></span>Alto</span></td>
+                  <td>15 Jul 18:44 – 17 Jul 06:29</td>
+                  <td>1104 km</td>
+                  <td class="danger-txt">27:16</td>
+                  <td>31:12</td>
+                  <td><b>7</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination annotated"><span class="chip">CA-10</span><b>Page:</b> 1 <div class="nav">‹</div><div class="nav">›</div></div>
+        </div>
+
+        <div id="hos-map" class="subview">
+          <div class="mapbox annotated">
+            <span class="chip">CA-14</span>
+            <div class="pin" style="left:63%;top:13%"></div>
+            <div class="pin" style="left:63%;top:21%"></div>
+            <div class="pin" style="left:62%;top:31%"></div>
+            <div class="pin" style="left:61%;top:40%"></div>
+            <div class="pin" style="left:56%;top:66%"></div>
+            <div class="pin" style="left:52%;top:73%"></div>
+            <div class="tooltip"><b>Tiempo Máximo Excedido de Trabajo Acumu...</b><br>Vehículos: TMO-394 - 3HSDZAPT0SN678855<br>Grupo primario: TRAMO DEL CENTRO, S.A. D.<br>Fecha del evento: 07/17/2026 06:29<br>Horas de trabajo: 24:05<br>Distancia: 1046 km<br>Categorías: Política de Descanso</div>
+            <div class="legend">● Riesgo HoS · colores y ubicación visibles sin depender sólo del hover</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPEED -->
+      <div id="speed" class="tabview">
+        <div class="cards annotated">
+          <span class="chip">CA-04</span>
+          <article class="card blue2"><div class="smalltop">VEHÍCULOS CON EXCESOS</div><div class="big">27 / 112</div><div class="label"><b>24 %</b></div></article>
+          <article class="card ok"><div class="smalltop">BAJO</div><div class="big">8</div><div class="label">Vehículos · <b>29.63 %</b></div></article>
+          <article class="card med"><div class="smalltop">MEDIO</div><div class="big">6</div><div class="label">Vehículos · <b>22.22 %</b></div></article>
+          <article class="card high"><div class="smalltop">ALTO</div><div class="big">1</div><div class="label">Vehículos · <b>3.7 %</b></div></article>
+          <article class="card crit"><div class="smalltop">CRÍTICO</div><div class="big">12</div><div class="label">Vehículos · <b>44.44 %</b></div></article>
+          <article class="card med"><div class="smalltop">MODERADOS / 100 KM</div><div class="big">42</div><div class="label">Indicador</div></article>
+          <article class="card high"><div class="smalltop">GRAVES / 100 KM</div><div class="big">92</div><div class="label">Indicador</div></article>
+          <article class="card crit"><div class="smalltop">CRÍTICOS / 100 KM</div><div class="big">20</div><div class="label">Indicador</div></article>
+        </div>
+
+        <div class="subtabs">
+          <button class="subtab active" data-parent="speed" data-sub="speed-list">SPEED INCIDENTS</button>
+          <button class="subtab" data-parent="speed" data-sub="speed-map">HEATMAP</button>
+        </div>
+
+        <div id="speed-list" class="subview active">
+          <div class="toolbar annotated">
+            <span class="chip">CA-03 · CA-04</span>
+            <div class="search"><span class="material-symbols-outlined">search</span><input placeholder="Buscar en 27 registros..." /></div>
+            <div class="toolbar-right">
+              <button class="icon-btn" title="Exportar resultados"><span class="material-symbols-outlined">download</span></button>
+              <button class="icon-btn" title="Actualizar datos"><span class="material-symbols-outlined">refresh</span></button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Severidad</th>
+                  <th>Vehículo</th>
+                  <th>Grupo Primario</th>
+                  <th>Críticos</th>
+                  <th>Graves</th>
+                  <th>Moderados</th>
+                  <th>Crítica x 100km</th>
+                  <th>Grave x 100km</th>
+                  <th>Moderado x 100km</th>
+                  <th>Dist. (KM)</th>
+                  <th># Detalles</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-dot crit">Crítico</span></td><td>TMO-420</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>1</td><td>3</td><td>1</td><td>20</td><td>60</td><td>20</td><td>5</td><td><b>5</b></td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-dot crit">Crítico</span></td><td>TMO-383 - 3HSDZAPTXRN717580</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>0</td><td>23</td><td>8</td><td>0</td><td>11</td><td>4</td><td>218</td><td><b>31</b></td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-dot crit">Crítico</span></td><td>TMO-408 - 3HSDZAPT1SN472819</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>0</td><td>38</td><td>15</td><td>0</td><td>10</td><td>4</td><td>365</td><td><b>53</b></td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-dot crit">Crítico</span></td><td>TMO-347 - 3HSDZAPT8PN128167</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>0</td><td>2</td><td>0</td><td>0</td><td>6</td><td>0</td><td>31</td><td><b>2</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination"><b>Page:</b> 1 <div class="nav">‹</div><div class="nav">›</div></div>
+        </div>
+
+        <div id="speed-map" class="subview">
+          <div class="mapbox"><div class="pin" style="left:58%;top:24%"></div><div class="pin" style="left:55%;top:45%"></div><div class="pin" style="left:48%;top:68%"></div><div class="tooltip"><b>Heatmap de velocidad</b><br>Vista persistida sin recargar el reporte. Los focos más intensos corresponden a mayor frecuencia y severidad de excesos.</div></div>
+        </div>
+      </div>
+
+      <!-- OFFLINE -->
+      <div id="offline" class="tabview">
+        <div class="cards annotated">
+          <span class="chip">CA-04</span>
+          <article class="card blue2"><div class="smalltop">VEHÍCULOS OFFLINE</div><div class="big">10 / 112</div><div class="label"><b>8.93 %</b> de la flota</div></article>
+          <article class="card crit"><div class="smalltop">OFFLINE AHORA CRÍTICO</div><div class="big">8</div><div class="label"><b>80 %</b> de vehículos offline</div></article>
+          <article class="card high"><div class="smalltop">OFFLINE AHORA GRAVE</div><div class="big">0</div><div class="label"><b>0 %</b> de vehículos offline</div></article>
+          <article class="card med"><div class="smalltop">OFFLINE AHORA MODERADO</div><div class="big">1</div><div class="label"><b>10 %</b> de vehículos offline</div></article>
+          <article class="card crit"><div class="smalltop">INTERMITENTE CRÍTICO</div><div class="big">0</div><div class="label"><b>0 %</b> de vehículos offline</div></article>
+          <article class="card high"><div class="smalltop">INTERMITENTE GRAVE</div><div class="big">0</div><div class="label"><b>0 %</b> de vehículos offline</div></article>
+          <article class="card med"><div class="smalltop">INTERMITENTE MODERADO</div><div class="big">1</div><div class="label"><b>10 %</b> de vehículos offline</div></article>
+        </div>
+
+        <div class="subtabs">
+          <button class="subtab active" data-parent="offline" data-sub="offline-list">VEHÍCULOS CON EVENTOS OFFLINE</button>
+          <button class="subtab" data-parent="offline" data-sub="offline-map">MAPA DE EVENTOS OFFLINE</button>
+        </div>
+
+        <div id="offline-list" class="subview active">
+          <div class="toolbar annotated">
+            <span class="chip">CA-03 · CA-04</span>
+            <div class="search"><span class="material-symbols-outlined">search</span><input placeholder="Buscar en 10 registros..." /></div>
+            <div class="toolbar-right">
+              <button class="icon-btn" title="Exportar resultados"><span class="material-symbols-outlined">download</span></button>
+              <button class="icon-btn" title="Actualizar datos"><span class="material-symbols-outlined">refresh</span></button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Severidad</th>
+                  <th>Estado actual</th>
+                  <th>Tipo de afectación</th>
+                  <th>Vehículo</th>
+                  <th>Grupo</th>
+                  <th>Power off</th>
+                  <th>Eventos Offline</th>
+                  <th>Bloque continuo offline actual</th>
+                  <th>Tiempo offline acumulado</th>
+                  <th>Mayor bloque continuo offline</th>
+                  <th>Último inicio offline</th>
+                  <th>Última ubicación</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-dot crit">Crítico</span></td><td>Offline ahora</td><td>Offline continuo</td><td>TMO-386 - 3HSDZAPT5RN7...</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>Sí</td><td>1</td><td>3216 h 3 m</td><td>3215 h 57 m</td><td>3215 h 57 m</td><td>2026-03-05 12:23</td><td>José Eleuterio González. SANTA CAT...</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-dot crit">Crítico</span></td><td>Offline ahora</td><td>Offline continuo</td><td>TMO-356 - 3HSDZAPT5PN5...</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>Sí</td><td>1</td><td>1545 h 19 m</td><td>1545 h 13 m</td><td>1545 h 13 m</td><td>2026-05-14 03:07</td><td>Carretera Agua Señora. MEXQUITIC D...</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-dot crit">Crítico</span></td><td>Offline ahora</td><td>Offline continuo</td><td>TMO-188 - 3HSDJAPT6GN4...</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>Sí</td><td>1</td><td>1081 h 12 m</td><td>1081 h 7 m</td><td>1081 h 7 m</td><td>2026-06-02 11:13</td><td>Calle Fernando Zamarripa. SOLEDAD ...</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-dot crit">Crítico</span></td><td>Offline ahora</td><td>Offline continuo</td><td>TMO-330</td><td>TRAMO DEL CENTRO, S.A. DE C.V.</td><td>Sí</td><td>1</td><td>1076 h 22 m</td><td>1076 h 17 m</td><td>1076 h 17 m</td><td>2026-06-02 16:03</td><td>Calle Fernando Zamarripa. SOLEDAD ...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination"><b>Page:</b> 1 <div class="nav">‹</div><div class="nav">›</div></div>
+        </div>
+
+        <div id="offline-map" class="subview">
+          <div class="mapbox"><div class="pin" style="left:60%;top:40%"></div><div class="pin" style="left:58%;top:56%"></div><div class="tooltip"><b>Mapa de eventos offline</b><br>Muestra únicamente ubicaciones relacionadas con desconexiones, manteniendo el resultado ya cargado al cambiar de pestaña.</div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Vehicle detail modal -->
+  <div id="vehicleDetail" class="modal-backdrop">
+    <div class="modal wide">
+      <div class="modal-head">
+        <div class="modal-title">Detalle de vehículo · Ciclo HoS</div>
+        <div class="spacer"></div>
+        <button class="head-icon close-modal"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-head annotated">
+          <span class="chip">CA-08 · CA-09</span>
+          <div class="summary-lines">
+            <div class="summary-line"><span class="material-symbols-outlined">local_shipping</span><span>TMO-371 - 3HSDZAPT9RN717571</span></div>
+            <div class="summary-line"><span class="material-symbols-outlined">notification_important</span><span>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</span></div>
+            <div class="summary-line"><span class="material-symbols-outlined">groups</span><span>Grupo Primario TRAMO DEL CENTRO, S.A. DE C.V.</span></div>
+            <div class="summary-line"><span class="material-symbols-outlined">calendar_month</span><span>Inicio Ciclo&nbsp; 15 Jul 2026 · 03:22</span></div>
+          </div>
+          <div class="summary-search">
+            <input placeholder="Buscar en 21 registros...">
+            <button id="vehicleMapBtn" class="btn btn-primary" title="Ver mapa con las ubicaciones de las alertas"><span class="material-symbols-outlined">map</span>&nbsp; Ver mapa</button>
+          </div>
+        </div>
+        <div class="cycle-toggle">
+          <button class="icon-btn" title="Mostrar u ocultar ciclo actual"><span class="material-symbols-outlined">timeline</span></button>
+          <b>Ver ciclo actual</b>
+        </div>
+        <div id="cycleGraphic" class="cycle-graphic">
+          <div class="timeline-wrap">
+            <div class="timebar top">
+              <div class="chunk" style="width:25%">20h 37m</div>
+              <div class="chunk" style="width:35%">23h 59m</div>
+              <div class="chunk" style="width:20%">11h 56m</div>
+              <div class="split" style="left:36%"></div>
+              <div class="split" style="left:78%"></div>
+            </div>
+            <div class="timebar">
+              <div class="chunk work" style="width:6%">3h 6m</div>
+              <div class="chunk pause" style="width:4%"></div>
+              <div class="chunk work" style="width:8%">3h 45m</div>
+              <div class="chunk pause" style="width:3%"></div>
+              <div class="chunk work" style="width:11%">4h 32m</div>
+              <div class="chunk pause" style="width:12%">6h 42m</div>
+              <div class="chunk work" style="width:13%">7h 2m</div>
+              <div class="chunk pause" style="width:9%"></div>
+              <div class="chunk work" style="width:8%">3h 6m</div>
+              <div class="chunk pause" style="width:3%"></div>
+              <div class="split" style="left:36%"></div>
+              <div class="split" style="left:78%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-table-wrap annotated">
+          <span class="chip">CA-10 · CA-12</span>
+          <table class="modal-table">
+            <thead>
+              <tr>
+                <th>Nivel</th>
+                <th>Hora de la Alerta</th>
+                <th>Dist. Acumulada</th>
+                <th>Horas de conducción</th>
+                <th>Descanso Acumulado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot yellow"></span>Trabajo continuo</span></td><td>16 Jul · 08:24</td><td>812 km</td><td class="danger-txt">05:03</td><td>12:10</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot yellow"></span>Trabajo continuo</span></td><td>16 Jul · 09:31</td><td>875 km</td><td class="danger-txt">06:10</td><td>12:10</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot yellow"></span>Trabajo continuo</span></td><td>16 Jul · 10:42</td><td>948 km</td><td class="danger-txt">07:21</td><td>12:10</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Tiempo máximo</span></td><td>17 Jul · 01:32</td><td>1450 km</td><td class="danger-txt">29:18</td><td>16:50</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Tiempo máximo</span></td><td>17 Jul · 08:00</td><td>1608 km</td><td class="danger-txt">29:28</td><td>23:09</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Tiempo máximo</span></td><td>17 Jul · 09:32</td><td>1615 km</td><td class="danger-txt">30:59</td><td>23:09</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Tiempo máximo</span></td><td>17 Jul · 10:11</td><td>1622 km</td><td class="danger-txt">30:55</td><td>23:52</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Tiempo máximo</span></td><td>17 Jul · 11:19</td><td>1707 km</td><td class="danger-txt">31:40</td><td>24:16</td></tr>
+              <tr class="clickable alert-row" data-modal="alertDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Tiempo máximo</span></td><td>17 Jul · 12:00</td><td>1767 km</td><td class="danger-txt">32:21</td><td>24:16</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer"><b>Page:</b>&nbsp;1&nbsp;&nbsp;<div class="nav">‹</div><div class="nav">›</div></div>
+    </div>
+  </div>
+
+  <!-- Alert detail modal -->
+  <div id="alertDetail" class="modal-backdrop">
+    <div class="modal large">
+      <div class="modal-head">
+        <div class="modal-title">Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</div>
+        <div class="spacer"></div>
+        <button class="head-icon" title="Compartir"><span class="material-symbols-outlined">share</span></button>
+        <button class="head-icon close-modal"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="details-layout annotated">
+          <span class="chip">CA-12 · CA-13</span>
+          <div class="details-col">
+            <div class="detail-label">Fecha del evento:</div>
+            <div>2026-07-17 12:00:27 PM</div>
+            <div class="detail-label">Fecha de la alerta:</div>
+            <div>2026-07-17 12:03:58 PM</div>
+            <div class="detail-label">Vehículo:</div>
+            <div>TMO-371 - 3HSDZAPT9RN717571</div>
+            <div class="detail-label">Activo:</div>
+            <div>Sin conductor</div>
+            <div class="detail-label">Categoría de Alerta:</div>
+            <div>Política de Descanso</div>
+            <div class="detail-label">Detalle:</div>
+            <div class="detail-mono">Vehiculo TMO-371 - 3HSDZAPT9RN717571 ha
+excedido el tiempo máximo de trabajo
+acumulado (14h)
+Inicio de viaje
+Hora Local: Viernes, 2026 17 Jul 10:19
+AM CST
+UTC: 17 de Julio de 2026 a las 16:19
+Distancia conducida 59100,0</div>
+            <div class="detail-label">Evento:</div>
+            <div><span class="material-symbols-outlined" style="color:var(--crit)">error</span> Punto de Rastreo (trckpnt, 1)</div>
+            <div class="detail-label">Velocidad:</div>
+            <div>98 km/h</div>
+            <div class="detail-label">Acciones:</div>
+            <div><span class="material-symbols-outlined" style="color:var(--primary)">route</span> Ver viaje &nbsp;&nbsp;&nbsp; <span class="material-symbols-outlined" style="color:var(--primary)">my_location</span> Rastreo</div>
+          </div>
+          <div class="details-col">
+            <div><span class="material-symbols-outlined" style="color:var(--muted)">layers</span> No está dentro de una geocerca</div>
+            <div style="margin-top:18px"><span class="material-symbols-outlined" style="color:var(--primary)">location_on</span> Supercarretera Cerritos-Rioverde<br>CERRITOS, SAN LUIS POTOSÍ. MX</div>
+            <div class="mini-map" style="margin-top:16px"><div class="pin"></div></div>
+            <div class="coord"><span class="material-symbols-outlined">map</span> 22.52828, -100.45080</div>
+            <div class="metric-block"><b>TRABAJANDO: 32h 21m 47s</b><small>Inició: mié., 15 de jul. de 2026, 3:22:37 AM</small></div>
+            <div class="metric-block"><b>Última pausa: 23m</b><small>Inició: vie., 17 de jul. de 2026, 9:47:44 AM<br>Fin: vie., 17 de jul. de 2026, 10:11:20 AM</small></div>
+            <div class="metric-block"><b>Último Trabajo Continuo: 01h 49m</b><small>Inició: vie., 17 de jul. de 2026, 10:11:20 AM</small></div>
+          </div>
+          <div class="details-col" style="display:flex;flex-direction:column">
+            <div class="right-muted">Sin comentarios</div>
+            <div style="flex:1"></div>
+            <div class="comment-box">
+              <div class="comment-input"><input placeholder="Comentario"><span class="material-symbols-outlined" style="color:var(--primary)">send</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="resolve">RESOLVER</button>
+    </div>
+  </div>
+
+  <!-- Vehicle alerts map modal -->
+  <div id="vehicleMapModal" class="modal-backdrop">
+    <div class="modal large">
+      <div class="modal-head">
+        <div class="modal-title">Mapa de alertas · TMO-371</div>
+        <div class="spacer"></div>
+        <button class="head-icon close-modal"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="modal-body" style="padding:16px">
+        <div class="mapbox" style="height:520px;border-radius:12px">
+          <div class="pin" style="left:34%;top:72%"></div>
+          <div class="pin" style="left:40%;top:65%"></div>
+          <div class="pin" style="left:47%;top:58%"></div>
+          <div class="pin" style="left:53%;top:49%"></div>
+          <div class="pin" style="left:58%;top:40%"></div>
+          <div class="pin" style="left:62%;top:31%"></div>
+          <div class="pin" style="left:66%;top:23%"></div>
+          <div class="tooltip"><b>9 alertas del ciclo</b><br>Amarillo: trabajo continuo excedido.<br>Rojo: tiempo máximo excedido.<br><br>Los puntos representan la ubicación de envío de cada alerta del vehículo.</div>
+          <div class="legend"><span style="color:var(--med-dark)">●</span> Trabajo continuo &nbsp;&nbsp; <span style="color:var(--crit)">●</span> Tiempo máximo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Speed detail modal -->
+  <div id="speedDetail" class="modal-backdrop">
+    <div class="modal medium">
+      <div class="modal-head">
+        <div class="modal-title">Detalle de incidencias de velocidad</div>
+        <div class="spacer"></div>
+        <button class="head-icon close-modal"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="modal-body" style="padding:20px">
+        <p><b>Vehículo:</b> TMO-383 - 3HSDZAPTXRN717580</p>
+        <p><b>Grupo Primario:</b> TRAMO DEL CENTRO, S.A. DE C.V.</p>
+        <p><b>Totales:</b> 0 críticos · 23 graves · 8 moderados · 218 km analizados</p>
+        <table class="modal-table" style="min-width:100%">
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Velocidad</th><th>Límite</th><th>Ubicación</th></tr></thead>
+          <tbody>
+            <tr><td>2026-07-17 08:43</td><td>Grave</td><td>101 km/h</td><td>80 km/h</td><td>SLP - MTL - MTY</td></tr>
+            <tr><td>2026-07-17 09:51</td><td>Grave</td><td>98 km/h</td><td>80 km/h</td><td>Carretera Matehuala-Saltillo</td></tr>
+            <tr><td>2026-07-17 10:28</td><td>Moderado</td><td>90 km/h</td><td>80 km/h</td><td>Carretera Matehuala-Saltillo</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offline detail modal -->
+  <div id="offlineDetail" class="modal-backdrop">
+    <div class="modal medium">
+      <div class="modal-head">
+        <div class="modal-title">Detalle de conectividad</div>
+        <div class="spacer"></div>
+        <button class="head-icon close-modal"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div class="modal-body" style="padding:20px">
+        <p><b>Vehículo:</b> TMO-386 - 3HSDZAPT5RN7...</p>
+        <p><b>Estado actual:</b> Offline ahora</p>
+        <p><b>Tipo de afectación:</b> Offline continuo</p>
+        <p><b>Power off:</b> Sí</p>
+        <p><b>Bloque continuo offline actual:</b> 3216 h 3 m</p>
+        <p><b>Tiempo offline acumulado:</b> 3215 h 57 m</p>
+        <p><b>Mayor bloque continuo offline:</b> 3215 h 57 m</p>
+        <p><b>Último inicio offline:</b> 2026-03-05 12:23</p>
+        <p><b>Última ubicación:</b> José Eleuterio González. SANTA CAT...</p>
+      </div>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-head"><h2>Criterios de aceptación</h2><button id="closeSidebar">✕</button></div>
+    <div class="ca-list">
+      <div class="ca-item"><b>CA-01 · Filtros simplificados</b><p>La vista muestra sólo Grupo, Vehículos y Periodo; no incluye checkbox de modo admin.</p></div>
+      <div class="ca-item"><b>CA-02 · HoS sin selección manual de triggers</b><p>El panel asume automáticamente los criterios HoS aplicables para el análisis.</p></div>
+      <div class="ca-item"><b>CA-03 · Generación paralela y persistencia</b><p>HoS, velocidad y offline ya vienen listos y no se recargan al cambiar de pestaña.</p></div>
+      <div class="ca-item"><b>CA-04 · KPIs por pestaña</b><p>Cada pestaña presenta sus propios encabezados y métricas, con datos consistentes con las imágenes base.</p></div>
+      <div class="ca-item"><b>CA-05 · Un registro clicable por fila</b><p>El usuario puede hacer clic en cualquier fila para abrir el modal correspondiente; la última columna conserva el conteo de alertas o detalles.</p></div>
+      <div class="ca-item"><b>CA-06 · Agrupación por evolución del ciclo</b><p>En HoS el listado principal conserva la lógica del ciclo y el detalle muestra la secuencia de alertas.</p></div>
+      <div class="ca-item"><b>CA-07 · Ordenamiento y severidad</b><p>Los listados mantienen la prioridad por severidad y orden visible alineado al panel esperado.</p></div>
+      <div class="ca-item"><b>CA-08 · Navegación más intuitiva</b><p>El detalle se abre como modal y el ciclo actual puede desplegarse desde arriba, sin flechas escondidas.</p></div>
+      <div class="ca-item"><b>CA-09 · Visualización del ciclo actual</b><p>El modal de detalle del vehículo puede desplegar una línea de tiempo del ciclo actual, separada del detalle de una alerta puntual.</p></div>
+      <div class="ca-item"><b>CA-10 · Paginación</b><p>La lista principal y la lista de alertas dentro del detalle conservan paginación visible.</p></div>
+      <div class="ca-item"><b>CA-11 · Mejora visual</b><p>Se modernizan headers, tipografías, espaciados, botones e iconografía manteniendo un enfoque compatible con el framework actual.</p></div>
+      <div class="ca-item"><b>CA-12 · Orden y estructura correctos</b><p>Se respetan los órdenes de columnas y se separan el modal de detalle del vehículo y el modal de detalle de alerta.</p></div>
+      <div class="ca-item"><b>CA-13 · Mapa y detalle por evento</b><p>El detalle de alerta incluye ubicación, mapa y métricas del momento de la alerta, mientras el detalle del vehículo conserva la lista de alertas del ciclo.</p></div>
+      <div class="ca-item"><b>CA-14 · Mapa principal más útil</b><p>El mapa general no depende sólo del hover y mantiene una composición más contenida dentro del panel.</p></div>
+      <div class="ca-item"><b>CA-15 · Explicación del nivel en HoS</b><p>El encabezado Nivel de la tabla principal debe incluir un hover que explique la regla: 1–5 alertas amarillo oscuro, 6–9 naranja y 10 o más rojo.</p></div>
+    </div>
+  </aside>
+
+  <script>
+    const page=document.getElementById('page');
+    const sidebar=document.getElementById('sidebar');
+    const caToggle=document.getElementById('caToggle');
+    function setCA(open){
+      sidebar.classList.toggle('open',open);
+      page.classList.toggle('shifted',open);
+      document.body.classList.toggle('show-cas',open);
+      caToggle.textContent=open?'Ocultar CAs':'Criterios de aceptación';
+    }
+    caToggle.addEventListener('click',()=>setCA(!sidebar.classList.contains('open')));
+    document.getElementById('closeSidebar').addEventListener('click',()=>setCA(false));
+
+    // Vinculación bidireccional entre los chips del mockup y los criterios del sidebar.
+    const caItems=[...document.querySelectorAll('.ca-item')];
+    caItems.forEach(item=>{
+      const match=item.textContent.match(/CA-\d{2}/);
+      if(match) item.dataset.ca=match[0];
+    });
+
+    document.querySelectorAll('.chip').forEach(chip=>{
+      const refs=chip.textContent.match(/CA-\d{2}/g)||[];
+      chip.dataset.cas=refs.join(',');
+      chip.innerHTML=refs.map((ca,index)=>`${index?'<span class="ca-separator">·</span>':''}<button type="button" class="ca-ref" data-ca="${ca}">${ca}</button>`).join('');
+    });
+
+    function clearCASelection(){
+      document.querySelectorAll('.active-ca').forEach(el=>el.classList.remove('active-ca'));
+      document.querySelectorAll('.ca-target-active').forEach(el=>el.classList.remove('ca-target-active'));
+    }
+
+    function selectCA(ca,{scrollToTarget=false,scrollSidebar=false}={}){
+      clearCASelection();
+      const item=document.querySelector(`.ca-item[data-ca="${ca}"]`);
+      if(item){
+        item.classList.add('active-ca');
+        if(scrollSidebar) item.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+      const refs=[...document.querySelectorAll(`.ca-ref[data-ca="${ca}"]`)];
+      refs.forEach(ref=>{
+        ref.classList.add('active-ca');
+        const target=ref.closest('.annotated');
+        if(target) target.classList.add('ca-target-active');
+      });
+      if(scrollToTarget && refs[0]){
+        const target=refs[0].closest('.annotated')||refs[0];
+        target.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+    }
+
+    document.addEventListener('click',event=>{
+      const ref=event.target.closest('.ca-ref');
+      if(ref){
+        event.stopPropagation();
+        setCA(true);
+        selectCA(ref.dataset.ca,{scrollSidebar:true});
+        return;
+      }
+      const item=event.target.closest('.ca-item');
+      if(item){
+        selectCA(item.dataset.ca,{scrollToTarget:true});
+      }
+    });
+
+    document.querySelectorAll('.section-tab').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('.section-tab').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.tabview').forEach(v=>v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    }));
+
+    document.querySelectorAll('.subtab').forEach(btn=>btn.addEventListener('click',()=>{
+      const parent=btn.dataset.parent;
+      document.querySelectorAll(`.subtab[data-parent="${parent}"]`).forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll(`#${parent} .subview`).forEach(v=>v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.sub).classList.add('active');
+    }));
+
+    function openModal(id){document.getElementById(id).classList.add('open')}
+    function closeModal(el){el.closest('.modal-backdrop').classList.remove('open')}
+    document.querySelectorAll('.close-modal').forEach(btn=>btn.addEventListener('click',e=>closeModal(e.currentTarget)));
+    document.querySelectorAll('.modal-backdrop').forEach(bg=>bg.addEventListener('click',e=>{ if(e.target===bg) bg.classList.remove('open'); }));
+    document.querySelectorAll('.hos-row').forEach(row=>row.addEventListener('click',()=>openModal('vehicleDetail')));
+    document.querySelectorAll('.alert-row').forEach(row=>row.addEventListener('click',()=>openModal('alertDetail')));
+    document.querySelectorAll('.speed-row').forEach(row=>row.addEventListener('click',()=>openModal('speedDetail')));
+    document.querySelectorAll('.offline-row').forEach(row=>row.addEventListener('click',()=>openModal('offlineDetail')));
+
+    const cycleGraphic=document.getElementById('cycleGraphic');
+    document.querySelector('.cycle-toggle').addEventListener('click',()=>cycleGraphic.classList.toggle('open'));
+    document.getElementById('vehicleMapBtn').addEventListener('click',()=>openModal('vehicleMapModal'));
+  </script>
+</body>
+</html>
