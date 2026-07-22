@@ -188,6 +188,65 @@
     .card.red .big,.card.crit .big,.card.green .big,.card.ok .big,
     .card.high .big,.card.med .big,.card.blue2 .big,.card.info .big{color:var(--cd)}
 
+    /* ── Roadmap de desarrollo (doc interno) ── */
+    .section-tab.rm-tab{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:.875rem}
+    .section-tab.rm-tab::before{content:"DEV";font-size:.55rem;font-weight:800;letter-spacing:.05em;background:var(--primary-050);border:1px solid var(--primary-line);color:var(--primary-dark);padding:2px 7px;border-radius:999px}
+    .rm-wrap{padding:22px;display:grid;gap:28px;max-width:1180px}
+    .rm-section h3{margin:0 0 4px;font-size:1rem;color:var(--text)}
+    .rm-section>p{margin:0 0 12px;color:var(--text-2);font-size:.8438rem;line-height:1.6;max-width:900px}
+    .rm-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:var(--r)}
+    .rm-table{width:100%;min-width:920px;border-collapse:collapse;font-size:13px}
+    .rm-table th{background:var(--surface-2);text-align:left;font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+    .rm-table td{padding:12px 14px;border-top:1px solid var(--line-soft);vertical-align:top;color:var(--text-2);line-height:1.55}
+    .rm-table td b{color:var(--text)}
+    .rm-table .evid{font-size:12px;color:var(--muted);display:block;margin-top:4px}
+    .prio{display:inline-block;font-size:.625rem;font-weight:800;letter-spacing:.04em;padding:3px 9px;border-radius:999px;white-space:nowrap}
+    .prio.p0{background:var(--crit-soft);border:1px solid var(--crit-line);color:var(--crit-dark)}
+    .prio.p1{background:var(--med-soft);border:1px solid var(--med-line);color:var(--med-dark)}
+    .ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .ba-col{border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;background:var(--surface)}
+    .ba-col.before{border-top:3px solid var(--muted)}
+    .ba-col.after{border-top:3px solid var(--primary)}
+    .ba-col h4{margin:0 0 10px;font-size:.6875rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+    .ba-col.after h4{color:var(--primary-dark)}
+    .ba-col ul{margin:0;padding-left:18px;display:grid;gap:7px;font-size:.8125rem;color:var(--text-2);line-height:1.5}
+    @media (max-width:900px){.ba-grid{grid-template-columns:1fr}}
+
+    /* ── Periodo no aplicable a Offline ── */
+    .field.period{position:relative}
+    .period-note{display:none;position:absolute;left:2px;top:100%;margin-top:6px;font-size:11px;line-height:1.4;color:var(--info-dark);max-width:260px}
+    body.offline-view .period-note{display:block}
+    body.offline-view .field.period select{opacity:.5;border-style:dashed;background:var(--surface-2);pointer-events:none}
+    body.offline-view .field.period label{color:var(--info-dark)}
+    .live-badge{display:inline-flex;align-items:center;gap:6px;font-size:.625rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--info-dark);background:var(--info-soft);border:1px solid var(--info-line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+    .live-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--info);animation:livePulse 1.8s infinite}
+    @keyframes livePulse{0%,100%{box-shadow:0 0 0 0 oklch(0.6 0.13 250/.45)}50%{box-shadow:0 0 0 5px oklch(0.6 0.13 250/0)}}
+    .tab-note{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--info-line);background:var(--info-soft);color:var(--info-dark);font-size:.8125rem;line-height:1.5}
+    .tab-note b{font-weight:700}
+
+    /* ── Resumen: agrupación por riesgo ── */
+    .fleet-strip{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;padding:16px 22px;border-bottom:1px solid var(--line);background:var(--surface-2);font-size:.875rem;color:var(--text-2)}
+    .fleet-strip b{color:var(--text);font-weight:700}
+    .fleet-strip .material-symbols-outlined{font-size:19px;color:var(--primary);margin-right:4px}
+    .fleet-strip .fleet-crit .material-symbols-outlined{color:var(--crit-dark)}
+    .fleet-strip .fleet-crit b{color:var(--crit-dark)}
+    .risk-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:20px}
+    .risk-group{--rg:var(--primary-dark);--rg-soft:var(--primary-050);--rg-line:var(--primary-line);
+      border:1px solid var(--rg-line);border-top:3px solid var(--rg);border-radius:var(--r);
+      background:var(--rg-soft);padding:16px 18px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-sm)}
+    .rg-hos{--rg:var(--crit-dark);--rg-soft:var(--crit-soft);--rg-line:var(--crit-line)}
+    .rg-speed{--rg:var(--high-dark);--rg-soft:var(--high-soft);--rg-line:var(--high-line)}
+    .rg-off{--rg:var(--info-dark);--rg-soft:var(--info-soft);--rg-line:var(--info-line)}
+    .rg-head{display:flex;align-items:center;gap:8px;font-size:.6875rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--rg)}
+    .rg-head .material-symbols-outlined{font-size:18px}
+    .rg-big{font-size:2.1rem;font-weight:700;line-height:1.05;color:var(--rg);font-variant-numeric:tabular-nums}
+    .rg-sub{font-size:.8rem;color:var(--muted)}
+    .rg-sub b{color:var(--text-2)}
+    .rg-stats{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px solid var(--rg-line);display:grid;gap:7px}
+    .rg-stats li{display:flex;justify-content:space-between;gap:12px;font-size:.8rem;color:var(--muted)}
+    .rg-stats li b{color:var(--text);font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+    @media (max-width:1100px){.risk-groups{grid-template-columns:1fr}}
+
     /* ── Subtabs (second level) ── */
     .subtabs{display:flex;gap:28px;padding:0 22px;border-bottom:1px solid var(--line)}
     .subtab{padding:16px 2px;border:0;background:none;font-weight:700;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:color .18s,border-color .18s}
@@ -366,22 +425,94 @@
   <main id="page" class="page">
     <section class="filters annotated">
       <span class="chip">CA-01 · CA-02</span>
-      <div class="field"><label>Grupo</label><input value="tramo del centro"></div>
-      <div class="field"><label>Vehículos</label><input value="13993 vehículos seleccionados"></div>
-      <div class="field"><label>Periodo</label><select><option>Julio 16 - 17, 2026</option><option>Hoy</option><option>Ayer y hoy</option></select></div>
+      <div class="field"><label>Grupo</label><input value="TRAMO DEL CENTRO"></div>
+      <div class="field"><label>Vehículos</label><input value="112 vehículos seleccionados"></div>
+      <div class="field period"><label>Periodo</label><select><option>Julio 16 - 17, 2026</option><option>Hoy</option><option>Ayer y hoy</option></select><small class="period-note">No aplica en esta vista: el estado offline siempre refleja el último reporte de cada unidad</small></div>
       <button class="btn apply">APLICAR</button>
     </section>
 
     <div class="section-tabs annotated">
       <span class="chip">CA-03 · CA-11</span>
-      <button class="section-tab active" data-tab="hos">Horas de servicio</button>
+      <button class="section-tab active" data-tab="summary">Resumen</button>
+      <button class="section-tab" data-tab="hos">Horas de servicio</button>
       <button class="section-tab" data-tab="speed">Excesos de velocidad</button>
       <button class="section-tab" data-tab="offline">Dispositivos offline</button>
+      <button class="section-tab rm-tab" data-tab="roadmap">Notas de Desarrollo</button>
     </div>
 
     <section class="panel">
+      <!-- RESUMEN -->
+      <div id="summary" class="tabview active">
+        <div class="fleet-strip">
+          <span><span class="material-symbols-outlined">local_shipping</span> <b>Flota evaluada: 112 vehículos</b> · TRAMO DEL CENTRO · Jul 16–17</span>
+          <span class="fleet-crit"><span class="material-symbols-outlined">warning</span> <b>6 / 112</b> en nivel crítico considerando los 3 riesgos</span>
+        </div>
+        <div class="risk-groups">
+          <section class="risk-group rg-hos">
+            <header class="rg-head"><span class="material-symbols-outlined">schedule</span> Horas de servicio</header>
+            <div class="rg-big">16 %</div>
+            <div class="rg-sub"><b>18 / 112</b> vehículos en incumplimiento</div>
+            <ul class="rg-stats">
+              <li><span>Críticos</span><b>1 / 18 con 10+ alertas</b></li>
+              <li><span>Promedio conducción</span><b>27 hrs</b></li>
+              <li><span>Total conducción</span><b>481 hrs</b></li>
+            </ul>
+          </section>
+          <section class="risk-group rg-speed">
+            <header class="rg-head"><span class="material-symbols-outlined">speed</span> Excesos de velocidad</header>
+            <div class="rg-big">24 %</div>
+            <div class="rg-sub"><b>27 / 112</b> vehículos con excesos</div>
+            <ul class="rg-stats">
+              <li><span>Críticos</span><b>3 / 27 con excesos</b></li>
+              <li><span>Densidad x 100 km</span><b>20 críticos · 92 graves</b></li>
+              <li><span>Moderados x 100 km</span><b>42</b></li>
+            </ul>
+          </section>
+          <section class="risk-group rg-off">
+            <header class="rg-head"><span class="material-symbols-outlined">wifi_off</span> Dispositivos offline <span class="live-badge" style="margin-left:auto">Actual</span></header>
+            <div class="rg-big">9 %</div>
+            <div class="rg-sub"><b>10 / 112</b> vehículos sin reportar · según último reporte, no sujeto al periodo</div>
+            <ul class="rg-stats">
+              <li><span>Críticos</span><b>2 / 10 con más de 1000 h offline</b></li>
+              <li><span>Intermitentes</span><b>1 moderado</b></li>
+              <li><span>Mayor bloque offline</span><b>3216 h (TMO-386)</b></li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="subtabs">
+          <button class="subtab active" data-parent="summary" data-sub="summary-top">VEHÍCULOS DE MAYOR RIESGO</button>
+        </div>
+
+        <div id="summary-top" class="subview active">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Severidad</th>
+                  <th>Vehículo</th>
+                  <th>Dimensión</th>
+                  <th>Hallazgo principal</th>
+                  <th>Indicador clave</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="clickable hos-row" data-modal="vehicleDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-371 - 3HSDZAPT9RN717571</td><td>Horas de servicio</td><td>Tiempo máximo excedido de trabajo acumulado</td><td class="danger-txt">10 alertas · 31:40 hrs conducción</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-386 - 3HSDZAPT5RN7...</td><td>Offline</td><td>Offline continuo con power off desde marzo</td><td class="danger-txt">3216 h 3 m sin reportar</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-408 - 3HSDZAPT1SN472819</td><td>Velocidad</td><td>38 excesos graves y 15 moderados en 365 km</td><td class="danger-txt">53 detalles registrados</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-420</td><td>Velocidad</td><td>Mayor densidad de excesos críticos</td><td class="danger-txt">20 críticos x 100 km</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-383 - 3HSDZAPTXRN717580</td><td>Velocidad</td><td>23 excesos graves y 8 moderados en 218 km</td><td class="danger-txt">31 detalles registrados</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-356 - 3HSDZAPT5PN5...</td><td>Offline</td><td>Offline continuo con power off desde mayo</td><td class="danger-txt">1545 h 19 m sin reportar</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination"><b>Page:</b> 1 <div class="nav">‹</div><div class="nav">›</div></div>
+        </div>
+
+      </div>
+
       <!-- HOS -->
-      <div id="hos" class="tabview active">
+      <div id="hos" class="tabview">
         <div class="cards annotated">
           <span class="chip">CA-04</span>
           <article class="card red"><div class="smalltop">Incumplimiento</div><div class="big">18 / 112</div><div class="label">16% Vehículos en Incumplimiento</div></article>
@@ -549,6 +680,7 @@
 
       <!-- OFFLINE -->
       <div id="offline" class="tabview">
+        <div class="tab-note"><span class="live-badge">Estado actual</span><span>Este panel <b>no usa el periodo seleccionado</b>: no es posible mostrar el estado offline de una fecha previa. La conectividad se calcula siempre con el <b>último reporte</b> de cada unidad.</span></div>
         <div class="cards annotated">
           <span class="chip">CA-04</span>
           <article class="card blue2"><div class="smalltop">VEHÍCULOS OFFLINE</div><div class="big">10 / 112</div><div class="label"><b>8.93 %</b> de la flota</div></article>
@@ -605,6 +737,44 @@
 
         <div id="offline-map" class="subview">
           <div class="mapbox"><div class="pin" style="left:60%;top:40%"></div><div class="pin" style="left:58%;top:56%"></div><div class="tooltip"><b>Mapa de eventos offline</b><br>Muestra únicamente ubicaciones relacionadas con desconexiones, manteniendo el resultado ya cargado al cambiar de pestaña.</div></div>
+        </div>
+      </div>
+
+      <!-- ROADMAP DE DESARROLLO (doc interno) -->
+      <div id="roadmap" class="tabview">
+        <div class="tab-note"><span class="live-badge" style="color:var(--primary-dark);background:var(--primary-050);border-color:var(--primary-line)">Doc interno</span><span>Comparación entre el panel QRisk actual (Pegasus, capturas Jul 2026) y esta propuesta. No forma parte de la UI final; sirve para alinear al equipo sobre qué cambia entre el antes y el después.</span></div>
+        <div class="rm-wrap">
+
+          <section class="rm-section">
+            <h3>Antes → Después (HoS)</h3>
+            <div class="ba-grid">
+              <div class="ba-col before">
+                <h4>Hoy (Pegasus QRisk)</h4>
+                <ul>
+                  <li>Filtros con búsqueda de grupo, 14k vehículos, 9 alertas, periodo y <b>modo admin</b> visible.</li>
+                  <li>Nivel de alerta: un único ícono rojo, sin graduación ni ordenamiento por severidad.</li>
+                  <li>Detalle del vehículo como <b>fila expandida</b> dentro de la tabla principal.</li>
+                  <li>Distancias en <b>millas</b>; fechas en formatos mixtos (13/07/2026 y 2026-07-20).</li>
+                  <li>Ubicación, geocerca y estado del vehículo sólo visibles en el tooltip del mapa.</li>
+                  <li>HoS, Velocidad y Offline son páginas separadas que recargan al navegar.</li>
+                  <li>Sin estado de alerta, comentarios ni resolución.</li>
+                </ul>
+              </div>
+              <div class="ba-col after">
+                <h4>Propuesta (este mockup)</h4>
+                <ul>
+                  <li>Filtros simplificados: Grupo, Vehículos, Periodo (CA-01); triggers HoS automáticos (CA-02).</li>
+                  <li>Nivel calculado por # de alertas: 1–5 amarillo, 6–9 naranja, 10+ rojo, con explicación en hover (CA-15) y orden por severidad (CA-07).</li>
+                  <li>Detalle como <b>modal</b> con ciclo desplegable (línea de tiempo trabajo/pausa/descanso) y lista de alertas paginada (CA-08/09/10).</li>
+                  <li>Modal de alerta puntual con dirección, mapa, velocidad y métricas del momento (CA-12/13); comentarios y botón Resolver.</li>
+                  <li>Km y formato de fecha único; hora local + UTC en el detalle.</li>
+                  <li>3 análisis generados en paralelo y persistidos al cambiar de pestaña (CA-03) + pestaña <b>Resumen</b> consolidada.</li>
+                  <li>Periodo marcado como no aplicable en Offline (estado actual).</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
         </div>
       </div>
     </section>
@@ -912,6 +1082,7 @@ Distancia conducida 59100,0</div>
       document.querySelectorAll('.tabview').forEach(v=>v.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById(btn.dataset.tab).classList.add('active');
+      document.body.classList.toggle('offline-view',btn.dataset.tab==='offline');
     }));
 
     document.querySelectorAll('.subtab').forEach(btn=>btn.addEventListener('click',()=>{
