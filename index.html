@@ -230,6 +230,15 @@
     .fleet-strip .material-symbols-outlined{font-size:19px;color:var(--primary);margin-right:4px}
     .fleet-strip .fleet-crit .material-symbols-outlined{color:var(--crit-dark)}
     .fleet-strip .fleet-crit b{color:var(--crit-dark)}
+    .fleet-info{position:relative;display:inline-flex;align-items:center;gap:4px;color:var(--primary-dark);font-weight:700;cursor:help;outline:none}
+    .fleet-info>.material-symbols-outlined{font-size:17px;color:var(--primary);margin:0}
+    .fleet-info:focus-visible{box-shadow:var(--focus);border-radius:6px}
+    .fleet-tooltip{position:absolute;top:calc(100% + 8px);left:0;z-index:20;background:oklch(0.28 0.02 320/.96);color:#fff;padding:12px 14px;border-radius:var(--r-sm);box-shadow:var(--shadow-lg);min-width:290px;font-size:12px;line-height:1.5;visibility:hidden;opacity:0;transform:translateY(-3px);transition:opacity .18s var(--ease),transform .18s var(--ease),visibility .18s var(--ease);pointer-events:none}
+    .fleet-info:hover .fleet-tooltip,.fleet-info:focus-visible .fleet-tooltip{visibility:visible;opacity:1;transform:translateY(0)}
+    .fleet-tooltip b{display:block;font-weight:800;margin-bottom:8px;color:#fff;letter-spacing:.05em;text-transform:uppercase;font-size:10px;opacity:.85}
+    .fleet-tooltip ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+    .fleet-tooltip li{display:grid;grid-template-columns:56px 1fr;gap:10px;align-items:baseline;color:#fff}
+    .fleet-tooltip li span{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:oklch(0.78 0.05 320);font-size:11px;letter-spacing:.02em}
     .risk-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:20px}
     .risk-group{--rg:var(--primary-dark);--rg-soft:var(--primary-050);--rg-line:var(--primary-line);
       border:1px solid var(--rg-line);border-top:3px solid var(--rg);border-radius:var(--r);
@@ -311,6 +320,8 @@
     .hos-timeline-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.02em}
     .hos-legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid var(--line);background:var(--surface-2);font-size:.8125rem;color:var(--text-2)}
     .hos-legend b{font-weight:700;color:var(--text);margin-right:2px}
+    .kpi-scope{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;background:var(--crit-soft);color:var(--crit-dark);border:1px solid var(--crit-line);padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:middle}
+    .kpi-scope::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--crit)}
 
     .pagination{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--line);color:var(--text-2);font-size:13px}
     .pagination b{color:var(--text);font-weight:700}
@@ -473,7 +484,7 @@
       <!-- RESUMEN -->
       <div id="summary" class="tabview active">
         <div class="fleet-strip">
-          <span><span class="material-symbols-outlined">local_shipping</span> <b>Flota evaluada: 112 vehículos</b> · TRAMO DEL CENTRO · Jul 16–17</span>
+          <span><span class="material-symbols-outlined">local_shipping</span> <b>Flotas evaluadas:</b> 112 vehículos · Tramo Del Centro <span class="fleet-info" tabindex="0">+ 3 más<span class="material-symbols-outlined">info</span><span class="fleet-tooltip" role="tooltip"><b>Otras flotas incluidas</b><ul><li><span>12145</span>TRAMO DEL CENTRO, S.A. DE C.V. (2)</li><li><span>20430</span>Tramo del Centro IV</li><li><span>20494</span>Tramo del Centro IR</li></ul></span></span> · Jul 16–17</span>
           <span class="fleet-crit"><span class="material-symbols-outlined">warning</span> <b>6 / 112</b> en nivel crítico considerando los 3 riesgos</span>
         </div>
         <div class="risk-groups">
@@ -482,9 +493,8 @@
             <div class="rg-big">3.6 %</div>
             <div class="rg-sub"><b>4 / 112</b> vehículos en incumplimiento</div>
             <ul class="rg-stats">
-              <li><span>Críticos</span><b>1 / 4 con 10+ alertas</b></li>
-              <li><span>Promedio conducción</span><b>27 hrs</b></li>
-              <li><span>Total conducción</span><b>481 hrs</b></li>
+              <li><span>Promedio conducción</span><b>36 hrs</b></li>
+              <li><span>Total conducción</span><b>144 hrs</b></li>
             </ul>
           </section>
           <section class="risk-group rg-speed">
@@ -492,7 +502,6 @@
             <div class="rg-big">24 %</div>
             <div class="rg-sub"><b>27 / 112</b> vehículos con excesos</div>
             <ul class="rg-stats">
-              <li><span>Críticos</span><b>3 / 27 con excesos</b></li>
               <li><span>Densidad x 100 km</span><b>20 críticos · 92 graves</b></li>
               <li><span>Moderados x 100 km</span><b>42</b></li>
             </ul>
@@ -502,7 +511,6 @@
             <div class="rg-big">9 %</div>
             <div class="rg-sub"><b>10 / 112</b> vehículos sin reportar · según último reporte, no sujeto al periodo</div>
             <ul class="rg-stats">
-              <li><span>Críticos</span><b>2 / 10 con más de 1000 h offline</b></li>
               <li><span>Intermitentes</span><b>1 moderado</b></li>
               <li><span>Mayor bloque offline</span><b>3216 h (TMO-386)</b></li>
             </ul>
@@ -510,7 +518,7 @@
         </div>
 
         <div class="subtabs">
-          <button class="subtab active" data-parent="summary" data-sub="summary-top">VEHÍCULOS DE MAYOR RIESGO</button>
+          <button class="subtab active" data-parent="summary" data-sub="summary-top"></button>
         </div>
 
         <div id="summary-top" class="subview active">
@@ -518,7 +526,6 @@
             <table>
               <thead>
                 <tr>
-                  <th>Severidad</th>
                   <th>Vehículo</th>
                   <th>Dimensión</th>
                   <th>Hallazgo principal</th>
@@ -527,7 +534,6 @@
               </thead>
               <tbody>
                 <tr class="clickable expandable-row" data-vehicle="TMO-371">
-                  <td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td>
                   <td>TMO-371 - 3HSDZAPT9RN717571</td>
                   <td><span class="dim-tags"><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></span></td>
                   <td>Coincidencia de riesgos: HoS excedido + excesos de velocidad</td>
@@ -535,23 +541,24 @@
                 </tr>
                 <tr class="sub-row" data-parent="TMO-371">
                   <td>↳ Riesgo 1 de 2</td>
-                  <td>TMO-371 - 3HSDZAPT9RN717571</td>
                   <td><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span></td>
                   <td>Tiempo máximo excedido de trabajo acumulado</td>
                   <td class="danger-txt clickable hos-row" data-modal="vehicleDetail" data-vehicle="TMO-371">10 alertas · 31:40 hrs conducción ›</td>
                 </tr>
                 <tr class="sub-row" data-parent="TMO-371">
                   <td>↳ Riesgo 2 de 2</td>
-                  <td>TMO-371 - 3HSDZAPT9RN717571</td>
                   <td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td>
                   <td>14 excesos graves y 4 críticos en 190 km</td>
                   <td class="danger-txt clickable speed-row" data-modal="speedDetail">18 detalles registrados ›</td>
                 </tr>
-                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-386 - 3HSDZAPT5RN7...</td><td><span class="dim-tag offline"><span class="material-symbols-outlined">wifi_off</span>Offline</span></td><td>Offline continuo con power off desde marzo</td><td class="danger-txt">3216 h 3 m sin reportar</td></tr>
-                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-408 - 3HSDZAPT1SN472819</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>38 excesos graves y 15 moderados en 365 km</td><td class="danger-txt">53 detalles registrados</td></tr>
-                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-420</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>Mayor densidad de excesos críticos</td><td class="danger-txt">20 críticos x 100 km</td></tr>
-                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-383 - 3HSDZAPTXRN717580</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>23 excesos graves y 8 moderados en 218 km</td><td class="danger-txt">31 detalles registrados</td></tr>
-                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-356 - 3HSDZAPT5PN5...</td><td><span class="dim-tag offline"><span class="material-symbols-outlined">wifi_off</span>Offline</span></td><td>Offline continuo con power off desde mayo</td><td class="danger-txt">1545 h 19 m sin reportar</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td>TMO-386 - 3HSDZAPT5RN7...</td><td><span class="dim-tag offline"><span class="material-symbols-outlined">wifi_off</span>Offline</span></td><td>Offline continuo con power off desde marzo</td><td class="danger-txt">3216 h 3 m sin reportar</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td>TMO-408 - 3HSDZAPT1SN472819</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>38 excesos graves y 15 moderados en 365 km</td><td class="danger-txt">53 detalles registrados</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td>TMO-420</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>Mayor densidad de excesos críticos</td><td class="danger-txt">20 críticos x 100 km</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td>TMO-383 - 3HSDZAPTXRN717580</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>23 excesos graves y 8 moderados en 218 km</td><td class="danger-txt">31 detalles registrados</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td>TMO-356 - 3HSDZAPT5PN5...</td><td><span class="dim-tag offline"><span class="material-symbols-outlined">wifi_off</span>Offline</span></td><td>Offline continuo con power off desde mayo</td><td class="danger-txt">1545 h 19 m sin reportar</td></tr>
+                <tr class="clickable hos-row" data-modal="vehicleDetail" data-vehicle="TMO-327"><td>TMO-327 - 3HSDJAPT6EN018626</td><td><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span></td><td>6 alertas de máx. continuo + 2 de máx. diario</td><td class="danger-txt">8 alertas · 66:02 hrs conducción</td></tr>
+                <tr class="clickable hos-row" data-modal="vehicleDetail" data-vehicle="TMO-416"><td>TMO-416 - 3HSDZAPT7SN768511</td><td><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span></td><td>5 alertas de máx. continuo + 2 de máx. diario</td><td class="danger-txt">7 alertas · 18:44 hrs conducción</td></tr>
+                <tr class="clickable hos-row" data-modal="vehicleDetail" data-vehicle="TMO-394"><td>TMO-394 - 3HSDZAPT0SN678855</td><td><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span></td><td>3 alertas de máx. continuo + 4 de máx. diario</td><td class="danger-txt">7 alertas · 27:16 hrs conducción</td></tr>
               </tbody>
             </table>
           </div>
@@ -564,10 +571,10 @@
       <div id="hos" class="tabview">
         <div class="cards annotated">
           <span class="chip">CA-04</span>
-          <article class="card red"><div class="smalltop">Incumplimiento</div><div class="big">4 / 112</div><div class="label">3.6% Vehículos en Incumplimiento</div></article>
-          <article class="card green"><div class="smalltop">Cumplimiento</div><div class="big">98 / 112</div><div class="label">87.5% Vehículos en Cumplimiento</div></article>
-          <article class="card lav"><div class="smalltop">Promedio</div><div class="big">27 hrs</div><div class="label">Promedio horas de conducción</div></article>
-          <article class="card blue"><div class="smalltop">Total</div><div class="big">481 hrs</div><div class="label">Total horas de conducción</div></article>
+          <article class="card red"><div class="smalltop">Incumplimiento</div><div class="big">3.6 %</div><div class="label"><b>4 / 112</b> vehículos</div></article>
+          <article class="card green"><div class="smalltop">Cumplimiento</div><div class="big">87.5 %</div><div class="label"><b>98 / 112</b> vehículos</div></article>
+          <article class="card lav"><div class="smalltop">Promedio <span class="kpi-scope">En incumplimiento</span></div><div class="big">36 hrs</div><div class="label">Horas de conducción por vehículo</div></article>
+          <article class="card blue"><div class="smalltop">Total <span class="kpi-scope">En incumplimiento</span></div><div class="big">144 hrs</div><div class="label">Horas de conducción de los 4 vehículos</div></article>
         </div>
 
         <div class="subtabs">
@@ -578,7 +585,7 @@
         <div id="hos-list" class="subview active">
           <div class="toolbar annotated">
             <span class="chip">CA-05 · CA-06 · CA-07</span>
-            <div class="search"><span class="material-symbols-outlined">search</span><input placeholder="Buscar en 36 registros..." /></div>
+            <div class="search"><span class="material-symbols-outlined">search</span><input placeholder="Buscar en 4 vehículos..." /></div>
             <div class="toolbar-right">
               <button class="icon-btn" title="Exportar resultados"><span class="material-symbols-outlined">download</span></button>
               <button class="icon-btn" title="Actualizar datos"><span class="material-symbols-outlined">refresh</span></button>
@@ -586,8 +593,8 @@
           </div>
           <div class="hos-legend">
             <b>Cronología por tipo de alerta:</b>
-            <span class="alert-tag continuous"><i></i>Máx. continuo (14 h de trabajo seguido)</span>
-            <span class="alert-tag daily"><i></i>Máx. diario (24 h en 24 h)</span>
+            <span class="alert-tag continuous"><i></i>Máx. continuo</span>
+            <span class="alert-tag daily"><i></i>Máx. diario</span>
             <span style="margin-left:auto;color:var(--muted);font-size:12px">Cada color cubre el tiempo entre alertas dentro del rango del ciclo.</span>
           </div>
           <div class="table-wrap annotated">
