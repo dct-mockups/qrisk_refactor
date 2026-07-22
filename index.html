@@ -166,6 +166,33 @@
 
     /* ── Unified stat cards — SAME component & grid across every tab ── */
     .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:20px}
+    /* Speed condensed strip: one row with summary + 4 severity columns */
+    .speed-strip{position:relative;display:grid;grid-template-columns:minmax(180px,1fr) repeat(4,minmax(0,1.4fr));gap:10px;margin:20px;padding:14px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface-2);box-shadow:var(--shadow-sm)}
+    .ss-summary{display:flex;flex-direction:column;justify-content:center;gap:4px;padding:10px 14px;border-right:1px solid var(--line)}
+    .ss-summary .ss-cap{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+    .ss-summary .ss-big{font-size:1.6rem;font-weight:800;color:var(--text);line-height:1}
+    .ss-summary .ss-sub{font-size:.8125rem;color:var(--text-2)}
+    .ss-summary .ss-sub b{color:var(--text);font-weight:700}
+    .ss-level{display:flex;flex-direction:column;border-radius:var(--r-md);border:1px solid var(--line);background:var(--surface);position:relative}
+    .ss-level-head{position:relative;display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:.72rem;letter-spacing:.06em;font-weight:800;border-radius:calc(var(--r-md) - 1px) calc(var(--r-md) - 1px) 0 0;background:linear-gradient(90deg,var(--ss-fill) var(--ss-pct,0%),var(--ss-empty) var(--ss-pct,0%))}
+    .ss-level.ok{--ss-fill:var(--low-dark);--ss-empty:var(--low-soft);--ss-text:var(--low-dark)}
+    .ss-level.med{--ss-fill:var(--med-dark);--ss-empty:var(--med-soft);--ss-text:var(--med-dark)}
+    .ss-level.high{--ss-fill:var(--high-dark);--ss-empty:var(--high-soft);--ss-text:var(--high-dark)}
+    .ss-level.crit{--ss-fill:var(--crit-dark);--ss-empty:var(--crit-soft);--ss-text:var(--crit-dark)}
+    .ss-level-name{background:var(--ss-fill);color:#fff;padding:3px 8px;border-radius:4px;letter-spacing:.08em}
+    .ss-info{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:transparent;border:0;padding:0;color:#fff;cursor:help;position:relative;opacity:.9}
+    .ss-info:hover{opacity:1}
+    .ss-info .material-symbols-outlined{font-size:16px}
+    .ss-info .ss-tip{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 11px;border-radius:6px;font-size:.75rem;font-weight:500;letter-spacing:0;text-transform:none;white-space:normal;width:230px;line-height:1.4;opacity:0;pointer-events:none;transition:opacity .15s;z-index:30;box-shadow:var(--shadow-md,0 4px 12px rgba(0,0,0,.15))}
+    .ss-info .ss-tip::before{content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-bottom-color:var(--text)}
+    .ss-info:hover .ss-tip,.ss-info:focus-visible .ss-tip{opacity:1}
+    .ss-level-pct{margin-left:auto;color:var(--ss-text);font-size:.85rem;font-weight:800;letter-spacing:.02em}
+    .ss-metric{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:8px 12px;border-top:1px solid var(--line);font-size:.8125rem;color:var(--text-2)}
+    .ss-metric:first-of-type{border-top:0}
+    .ss-metric:last-child{border-radius:0 0 calc(var(--r-md) - 1px) calc(var(--r-md) - 1px)}
+    .ss-metric .ss-num{font-size:1.15rem;font-weight:800;color:var(--text);line-height:1}
+    .ss-metric .ss-note{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+    .ss-metric.muted .ss-num{color:var(--muted);font-weight:600}
     .card{--cd:var(--primary-dark);
       background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
       padding:16px 18px;min-height:118px;display:flex;flex-direction:column;gap:7px;
@@ -716,16 +743,65 @@
 
       <!-- SPEED -->
       <div id="speed" class="tabview">
-        <div class="cards annotated">
+        <div class="speed-strip annotated">
           <span class="chip">CA-04</span>
-          <article class="card blue2"><div class="smalltop">VEHÍCULOS CON EXCESOS</div><div class="big">27 / 112</div><div class="label"><b>24 %</b></div></article>
-          <article class="card ok"><div class="smalltop">BAJO</div><div class="big">8</div><div class="label">Vehículos · <b>29.63 %</b></div></article>
-          <article class="card med"><div class="smalltop">MEDIO</div><div class="big">6</div><div class="label">Vehículos · <b>22.22 %</b></div></article>
-          <article class="card high"><div class="smalltop">ALTO</div><div class="big">1</div><div class="label">Vehículos · <b>3.7 %</b></div></article>
-          <article class="card crit"><div class="smalltop">CRÍTICO</div><div class="big">12</div><div class="label">Vehículos · <b>44.44 %</b></div></article>
-          <article class="card med"><div class="smalltop">MODERADOS / 100 KM</div><div class="big">42</div><div class="label">Indicador</div></article>
-          <article class="card high"><div class="smalltop">GRAVES / 100 KM</div><div class="big">92</div><div class="label">Indicador</div></article>
-          <article class="card crit"><div class="smalltop">CRÍTICOS / 100 KM</div><div class="big">20</div><div class="label">Indicador</div></article>
+          <div class="ss-summary">
+            <div class="ss-cap">Vehículos con excesos</div>
+            <div class="ss-big">27 / 112</div>
+            <div class="ss-sub"><b>24 %</b> de la flota</div>
+          </div>
+          <div class="ss-level ok" style="--ss-pct:30%">
+            <div class="ss-level-head">
+              <span class="ss-level-name">BAJO</span>
+              <button type="button" class="ss-info" aria-label="Información nivel Bajo">
+                <span class="material-symbols-outlined">info</span>
+                <span class="ss-tip">Vehículos con excesos de baja severidad: rebasan el límite por menos de 10 km/h. Sin eventos moderados o superiores en el periodo.</span>
+              </button>
+              <span class="ss-level-pct">30 %</span>
+            </div>
+            <div class="ss-metric"><span class="ss-num">8</span><span class="ss-note">Vehículos</span></div>
+            <div class="ss-metric muted"><span class="ss-num">—</span><span class="ss-note">/ 100 km</span></div>
+            <div class="ss-metric muted"><span class="ss-num">—</span><span class="ss-note">Eventos</span></div>
+          </div>
+          <div class="ss-level med" style="--ss-pct:22%">
+            <div class="ss-level-head">
+              <span class="ss-level-name">MEDIO</span>
+              <button type="button" class="ss-info" aria-label="Información nivel Medio">
+                <span class="material-symbols-outlined">info</span>
+                <span class="ss-tip">Vehículos con al menos un exceso moderado: entre 10 y 20 km/h por encima del límite permitido.</span>
+              </button>
+              <span class="ss-level-pct">22 %</span>
+            </div>
+            <div class="ss-metric"><span class="ss-num">6</span><span class="ss-note">Vehículos</span></div>
+            <div class="ss-metric"><span class="ss-num">42</span><span class="ss-note">/ 100 km</span></div>
+            <div class="ss-metric"><span class="ss-num">218</span><span class="ss-note">Eventos</span></div>
+          </div>
+          <div class="ss-level high" style="--ss-pct:4%">
+            <div class="ss-level-head">
+              <span class="ss-level-name">ALTO</span>
+              <button type="button" class="ss-info" aria-label="Información nivel Alto">
+                <span class="material-symbols-outlined">info</span>
+                <span class="ss-tip">Vehículos con al menos un exceso grave: entre 20 y 30 km/h por encima del límite. Requiere seguimiento con el conductor.</span>
+              </button>
+              <span class="ss-level-pct">4 %</span>
+            </div>
+            <div class="ss-metric"><span class="ss-num">1</span><span class="ss-note">Vehículos</span></div>
+            <div class="ss-metric"><span class="ss-num">92</span><span class="ss-note">/ 100 km</span></div>
+            <div class="ss-metric"><span class="ss-num">425</span><span class="ss-note">Eventos</span></div>
+          </div>
+          <div class="ss-level crit" style="--ss-pct:44%">
+            <div class="ss-level-head">
+              <span class="ss-level-name">CRÍTICO</span>
+              <button type="button" class="ss-info" aria-label="Información nivel Crítico">
+                <span class="material-symbols-outlined">info</span>
+                <span class="ss-tip">Vehículos con al menos un exceso crítico: más de 30 km/h sobre el límite. Acción correctiva inmediata.</span>
+              </button>
+              <span class="ss-level-pct">44 %</span>
+            </div>
+            <div class="ss-metric"><span class="ss-num">12</span><span class="ss-note">Vehículos</span></div>
+            <div class="ss-metric"><span class="ss-num">20</span><span class="ss-note">/ 100 km</span></div>
+            <div class="ss-metric"><span class="ss-num">96</span><span class="ss-note">Eventos</span></div>
+          </div>
         </div>
 
         <div class="subtabs">
