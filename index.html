@@ -283,6 +283,35 @@
     .sev-label .material-symbols-outlined{font-size:18px}
     .danger-txt{color:var(--crit-dark);font-weight:700}
 
+    /* Multi-risk (expandable) rows in the summary top table */
+    .dim-tags{display:inline-flex;flex-wrap:wrap;gap:6px}
+    .dim-tag{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--text-2);white-space:nowrap}
+    .dim-tag .material-symbols-outlined{font-size:14px}
+    .dim-tag.hos{background:var(--crit-soft);border-color:var(--crit-line);color:var(--crit-dark)}
+    .dim-tag.speed{background:var(--high-soft);border-color:var(--high-line);color:var(--high-dark)}
+    .dim-tag.offline{background:var(--info-soft);border-color:var(--info-line);color:var(--info-dark)}
+    .risk-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:var(--crit-dark);color:#fff;font-size:.6875rem;font-weight:800;margin-right:6px}
+    .expand-caret{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;color:var(--muted);transition:transform .18s var(--ease),background .18s,color .18s;margin-left:4px;vertical-align:middle}
+    tbody tr.expandable-row:hover .expand-caret{background:var(--primary-050);color:var(--primary-dark)}
+    tbody tr.expandable-row.open .expand-caret{transform:rotate(180deg);color:var(--primary-dark)}
+    tbody tr.sub-row{display:none;background:var(--primary-050)}
+    tbody tr.sub-row.visible{display:table-row}
+    tbody tr.sub-row td{border-top:1px dashed var(--primary-line);padding-top:11px;padding-bottom:11px}
+    tbody tr.sub-row td:first-child{padding-left:44px;color:var(--primary-dark);font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase}
+
+    /* Alert mix chips + HoS timeline bar */
+    .alert-mix{display:inline-flex;flex-wrap:wrap;gap:6px}
+    .alert-tag{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--text-2);white-space:nowrap}
+    .alert-tag i{width:9px;height:9px;border-radius:2px;display:inline-block;flex:none}
+    .alert-tag.continuous i{background:var(--high)}
+    .alert-tag.daily i{background:var(--crit)}
+    .alert-tag.rest i{background:var(--info)}
+    .hos-timeline-wrap{min-width:170px;display:flex;flex-direction:column;gap:6px}
+    .hos-timeline{position:relative;height:10px;border-radius:999px;box-shadow:inset 0 0 0 1px oklch(0.4 0.03 320/.15);overflow:hidden}
+    .hos-timeline-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+    .hos-legend{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid var(--line);background:var(--surface-2);font-size:.8125rem;color:var(--text-2)}
+    .hos-legend b{font-weight:700;color:var(--text);margin-right:2px}
+
     .pagination{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:14px 20px;border-top:1px solid var(--line);color:var(--text-2);font-size:13px}
     .pagination b{color:var(--text);font-weight:700}
     .pagination .nav{width:34px;height:34px;border-radius:var(--r-sm);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:var(--surface);cursor:pointer;transition:.18s}
@@ -497,12 +526,32 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="clickable hos-row" data-modal="vehicleDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-371 - 3HSDZAPT9RN717571</td><td>Horas de servicio</td><td>Tiempo máximo excedido de trabajo acumulado</td><td class="danger-txt">10 alertas · 31:40 hrs conducción</td></tr>
-                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-386 - 3HSDZAPT5RN7...</td><td>Offline</td><td>Offline continuo con power off desde marzo</td><td class="danger-txt">3216 h 3 m sin reportar</td></tr>
-                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-408 - 3HSDZAPT1SN472819</td><td>Velocidad</td><td>38 excesos graves y 15 moderados en 365 km</td><td class="danger-txt">53 detalles registrados</td></tr>
-                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-420</td><td>Velocidad</td><td>Mayor densidad de excesos críticos</td><td class="danger-txt">20 críticos x 100 km</td></tr>
-                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-383 - 3HSDZAPTXRN717580</td><td>Velocidad</td><td>23 excesos graves y 8 moderados en 218 km</td><td class="danger-txt">31 detalles registrados</td></tr>
-                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-356 - 3HSDZAPT5PN5...</td><td>Offline</td><td>Offline continuo con power off desde mayo</td><td class="danger-txt">1545 h 19 m sin reportar</td></tr>
+                <tr class="clickable expandable-row" data-vehicle="TMO-371">
+                  <td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td>
+                  <td>TMO-371 - 3HSDZAPT9RN717571</td>
+                  <td><span class="dim-tags"><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></span></td>
+                  <td>Coincidencia de riesgos: HoS excedido + excesos de velocidad</td>
+                  <td class="danger-txt"><span class="risk-count">2</span>riesgos activos<span class="expand-caret material-symbols-outlined">expand_more</span></td>
+                </tr>
+                <tr class="sub-row" data-parent="TMO-371">
+                  <td>↳ Riesgo 1 de 2</td>
+                  <td>TMO-371 - 3HSDZAPT9RN717571</td>
+                  <td><span class="dim-tag hos"><span class="material-symbols-outlined">schedule</span>Horas de servicio</span></td>
+                  <td>Tiempo máximo excedido de trabajo acumulado</td>
+                  <td class="danger-txt clickable hos-row" data-modal="vehicleDetail">10 alertas · 31:40 hrs conducción ›</td>
+                </tr>
+                <tr class="sub-row" data-parent="TMO-371">
+                  <td>↳ Riesgo 2 de 2</td>
+                  <td>TMO-371 - 3HSDZAPT9RN717571</td>
+                  <td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td>
+                  <td>14 excesos graves y 4 críticos en 190 km</td>
+                  <td class="danger-txt clickable speed-row" data-modal="speedDetail">18 detalles registrados ›</td>
+                </tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-386 - 3HSDZAPT5RN7...</td><td><span class="dim-tag offline"><span class="material-symbols-outlined">wifi_off</span>Offline</span></td><td>Offline continuo con power off desde marzo</td><td class="danger-txt">3216 h 3 m sin reportar</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-408 - 3HSDZAPT1SN472819</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>38 excesos graves y 15 moderados en 365 km</td><td class="danger-txt">53 detalles registrados</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-420</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>Mayor densidad de excesos críticos</td><td class="danger-txt">20 críticos x 100 km</td></tr>
+                <tr class="clickable speed-row" data-modal="speedDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-383 - 3HSDZAPTXRN717580</td><td><span class="dim-tag speed"><span class="material-symbols-outlined">speed</span>Velocidad</span></td><td>23 excesos graves y 8 moderados en 218 km</td><td class="danger-txt">31 detalles registrados</td></tr>
+                <tr class="clickable offline-row" data-modal="offlineDetail"><td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td><td>TMO-356 - 3HSDZAPT5PN5...</td><td><span class="dim-tag offline"><span class="material-symbols-outlined">wifi_off</span>Offline</span></td><td>Offline continuo con power off desde mayo</td><td class="danger-txt">1545 h 19 m sin reportar</td></tr>
               </tbody>
             </table>
           </div>
@@ -535,6 +584,12 @@
               <button class="icon-btn" title="Actualizar datos"><span class="material-symbols-outlined">refresh</span></button>
             </div>
           </div>
+          <div class="hos-legend">
+            <b>Cronología por tipo de alerta:</b>
+            <span class="alert-tag continuous"><i></i>Máx. continuo (14 h de trabajo seguido)</span>
+            <span class="alert-tag daily"><i></i>Máx. diario (24 h en 24 h)</span>
+            <span style="margin-left:auto;color:var(--muted);font-size:12px">Cada color cubre el tiempo entre alertas dentro del rango del ciclo.</span>
+          </div>
           <div class="table-wrap annotated">
             <span class="chip">CA-15</span>
             <table>
@@ -542,8 +597,8 @@
                 <tr>
                   <th>Grupo Primario</th>
                   <th>Vehículo</th>
-                  <th>Alerta</th>
-                  <th title="Nivel calculado por cantidad de alertas: 1–5 amarillo oscuro, 6–9 naranja y 10 o más rojo.">Nivel ⓘ</th>
+                  <th>Alertas</th>
+                  <th title="Barra que representa el rango del ciclo. Cada color indica el tipo de alerta activa en ese tramo: naranja = máximo continuo (14 h), rojo = máximo diario (24 h). El nivel se sigue reflejando por la cantidad total de alertas.">Cronología ⓘ</th>
                   <th>Rango de Fechas</th>
                   <th>Dist. Acumulada</th>
                   <th>Horas de conducción</th>
@@ -555,8 +610,18 @@
                 <tr class="clickable hos-row" data-modal="vehicleDetail">
                   <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
                   <td>TMO-371 - 3HSDZAPT9RN717571</td>
-                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
-                  <td><span class="sev-label"><span class="sev-dot crit"></span>Crítico</span></td>
+                  <td>
+                    <div class="alert-mix">
+                      <span class="alert-tag continuous"><i></i>5 continuo</span>
+                      <span class="alert-tag daily"><i></i>5 diario</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="hos-timeline-wrap">
+                      <div class="hos-timeline" title="15 Jul 14:00 continuo · 15 Jul 20:00 diario · 16 Jul 04:00 continuo · 16 Jul 12:00 diario · 16 Jul 18:00 continuo · 17 Jul 00:00 diario · 17 Jul 04:00 continuo · 17 Jul 08:00 diario · 17 Jul 10:00 continuo · 17 Jul 11:30 diario" style="background:linear-gradient(to right,var(--high) 0 22%,var(--crit) 22% 34%,var(--high) 34% 46%,var(--crit) 46% 58%,var(--high) 58% 68%,var(--crit) 68% 78%,var(--high) 78% 86%,var(--crit) 86% 92%,var(--high) 92% 96%,var(--crit) 96% 100%)"></div>
+                      <div class="hos-timeline-labels"><span>15 Jul 03:22</span><span>17 Jul 12:00</span></div>
+                    </div>
+                  </td>
                   <td>15 Jul 03:22 – 17 Jul 12:00</td>
                   <td>1707 km</td>
                   <td class="danger-txt">31:40</td>
@@ -566,8 +631,18 @@
                 <tr class="clickable hos-row" data-modal="vehicleDetail">
                   <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
                   <td>TMO-327 - 3HSDJAPT6EN018626</td>
-                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
-                  <td><span class="sev-label"><span class="sev-dot orange"></span>Alto</span></td>
+                  <td>
+                    <div class="alert-mix">
+                      <span class="alert-tag continuous"><i></i>6 continuo</span>
+                      <span class="alert-tag daily"><i></i>2 diario</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="hos-timeline-wrap">
+                      <div class="hos-timeline" title="6 alertas de máx. continuo + 2 de máx. diario a lo largo del ciclo" style="background:linear-gradient(to right,var(--high) 0 28%,var(--crit) 28% 38%,var(--high) 38% 72%,var(--crit) 72% 82%,var(--high) 82% 100%)"></div>
+                      <div class="hos-timeline-labels"><span>14 Jul 22:10</span><span>17 Jul 11:18</span></div>
+                    </div>
+                  </td>
                   <td>14 Jul 22:10 – 17 Jul 11:18</td>
                   <td>1718 km</td>
                   <td class="danger-txt">66:02</td>
@@ -577,8 +652,18 @@
                 <tr class="clickable hos-row" data-modal="vehicleDetail">
                   <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
                   <td>TMO-416 - 3HSDZAPT7SN768511</td>
-                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
-                  <td><span class="sev-label"><span class="sev-dot orange"></span>Alto</span></td>
+                  <td>
+                    <div class="alert-mix">
+                      <span class="alert-tag continuous"><i></i>5 continuo</span>
+                      <span class="alert-tag daily"><i></i>2 diario</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="hos-timeline-wrap">
+                      <div class="hos-timeline" title="5 alertas de máx. continuo + 2 de máx. diario a lo largo del ciclo" style="background:linear-gradient(to right,var(--high) 0 35%,var(--crit) 35% 48%,var(--high) 48% 78%,var(--crit) 78% 90%,var(--high) 90% 100%)"></div>
+                      <div class="hos-timeline-labels"><span>16 Jul 01:05</span><span>17 Jul 08:00</span></div>
+                    </div>
+                  </td>
                   <td>16 Jul 01:05 – 17 Jul 08:00</td>
                   <td>1095 km</td>
                   <td class="danger-txt">18:44</td>
@@ -588,8 +673,18 @@
                 <tr class="clickable hos-row" data-modal="vehicleDetail">
                   <td>TRAMO DEL CENTRO, S.A. DE C.V.</td>
                   <td>TMO-394 - 3HSDZAPT0SN678855</td>
-                  <td>Tiempo Máximo Excedido de Trabajo Acumulado: (Tramo del Centro IR)</td>
-                  <td><span class="sev-label"><span class="sev-dot orange"></span>Alto</span></td>
+                  <td>
+                    <div class="alert-mix">
+                      <span class="alert-tag continuous"><i></i>3 continuo</span>
+                      <span class="alert-tag daily"><i></i>4 diario</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="hos-timeline-wrap">
+                      <div class="hos-timeline" title="3 alertas de máx. continuo + 4 de máx. diario a lo largo del ciclo" style="background:linear-gradient(to right,var(--high) 0 20%,var(--crit) 20% 40%,var(--high) 40% 55%,var(--crit) 55% 75%,var(--high) 75% 85%,var(--crit) 85% 100%)"></div>
+                      <div class="hos-timeline-labels"><span>15 Jul 18:44</span><span>17 Jul 06:29</span></div>
+                    </div>
+                  </td>
                   <td>15 Jul 18:44 – 17 Jul 06:29</td>
                   <td>1104 km</td>
                   <td class="danger-txt">27:16</td>
@@ -1101,6 +1196,17 @@ Distancia conducida 59100,0</div>
     document.querySelectorAll('.alert-row').forEach(row=>row.addEventListener('click',()=>openModal('alertDetail')));
     document.querySelectorAll('.speed-row').forEach(row=>row.addEventListener('click',()=>openModal('speedDetail')));
     document.querySelectorAll('.offline-row').forEach(row=>row.addEventListener('click',()=>openModal('offlineDetail')));
+
+    // Filas con múltiples dimensiones de riesgo: expanden en el mismo lugar
+    document.querySelectorAll('tr.expandable-row').forEach(row=>{
+      row.addEventListener('click',e=>{
+        // Evita que un clic en una celda de riesgo hija toque el toggle
+        if(e.target.closest('.hos-row,.speed-row,.offline-row,.alert-row')) return;
+        const key=row.dataset.vehicle;
+        const isOpen=row.classList.toggle('open');
+        document.querySelectorAll(`tr.sub-row[data-parent="${key}"]`).forEach(sub=>sub.classList.toggle('visible',isOpen));
+      });
+    });
 
     const cycleGraphic=document.getElementById('cycleGraphic');
     document.querySelector('.cycle-toggle').addEventListener('click',()=>cycleGraphic.classList.toggle('open'));
